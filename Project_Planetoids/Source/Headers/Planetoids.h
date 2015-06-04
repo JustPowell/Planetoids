@@ -15,4 +15,7 @@
 
 using namespace std;
 
-typedef tuple<GLfloat, GLfloat, GLfloat> tup3f;
+typedef tuple<GLfloat, GLfloat, GLfloat> vector3f;
+typedef tuple<GLfloat, GLfloat, GLfloat> color3f;
+typedef tuple<GLfloat, GLfloat, GLfloat> normal3f;
+typedef tuple<int, int, int> tup3i;

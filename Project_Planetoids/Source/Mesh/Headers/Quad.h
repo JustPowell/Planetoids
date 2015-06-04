@@ -3,8 +3,7 @@
 class Vertex;
 class Face;
 
-#include "Vertex.h"
-#include "Face.h"
+#include "Geometry.h"
 
 class Quad
 {

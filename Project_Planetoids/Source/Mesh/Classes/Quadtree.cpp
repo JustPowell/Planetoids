@@ -1,4 +1,4 @@
-#include "Quadtree.h"
+#include "../Headers/Quadtree.h"
 
 Quadtree::Quadtree(Face *face)
 {

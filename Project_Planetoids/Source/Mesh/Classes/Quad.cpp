@@ -1,4 +1,4 @@
-#include "Quad.h"
+#include "../Headers/Quad.h"
 
 Quad::Quad(Face *face)
 {

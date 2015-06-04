@@ -3,9 +3,9 @@
 class Quad;
 class Face;
 
-#include "Planetoids.h"
+#include "../../Headers/Planetoids.h"
 #include "Quad.h"
-#include "Face.h"
+#include "Geometry.h"
 
 
 class Quadtree

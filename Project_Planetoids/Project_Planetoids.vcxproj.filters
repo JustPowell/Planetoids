@@ -21,55 +21,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Quad.cpp">
+    <ClCompile Include="Source\Player\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Quadtree.cpp">
+    <ClCompile Include="Source\Mesh\Classes\Geometry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="common.cpp">
+    <ClCompile Include="Source\Mesh\Classes\PlanetMesh.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Misc\Classes\Vector3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Face.cpp">
-      <Filter>Source Files\Mesh</Filter>
+    <ClCompile Include="Source\Misc\Classes\common.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Source Files\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="PlanetMesh.cpp">
-      <Filter>Source Files\Mesh</Filter>
+    <ClCompile Include="Source\Mesh\Classes\Mesh.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Planetoids.h">
+    <ClInclude Include="Source\Player\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quad.h">
+    <ClInclude Include="Source\Mesh\Headers\PlanetMesh.h">
+      <Filter>Header Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mesh\Headers\Geometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Quadtree.h">
+    <ClInclude Include="Source\Headers\Planetoids.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="Source\Misc\Headers\Vector3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Face.h">
-      <Filter>Header Files\Mesh</Filter>
+    <ClInclude Include="Source\Misc\Headers\common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Header Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="PlanetMesh.h">
-      <Filter>Header Files\Mesh</Filter>
+    <ClInclude Include="Source\Mesh\Headers\Mesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

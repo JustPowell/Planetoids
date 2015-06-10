@@ -9,9 +9,21 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <direct.h>
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
 #include <iostream>
 #include <vector>
 #include <tuple>
+
+#include "../Player/Camera.h"
 
 using namespace std;
 
@@ -19,3 +31,5 @@ typedef tuple<GLfloat, GLfloat, GLfloat> vector3f;
 typedef tuple<GLfloat, GLfloat, GLfloat> color3f;
 typedef tuple<GLfloat, GLfloat, GLfloat> normal3f;
 typedef tuple<int, int, int> tup3i;
+
+static glm::mat4 proj = glm::perspective(45.0f, (float)(1024 / 768), 0.1f, 100.f);

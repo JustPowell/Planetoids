@@ -9,7 +9,7 @@
 class Face;
 class Vertex;
 
-class PlanetMesh : Mesh
+class PlanetMesh : public Mesh
 {
 public:
 	PlanetMesh(GLfloat radius, int sublvl);
@@ -35,7 +35,7 @@ private:
 	GLfloat radius;
 
 	vertex_l calcNewVerts(Face *face);
-
+	
 	struct key_hash : public unary_function<Edge, size_t>
 	{
 		size_t operator()(Edge* k) const

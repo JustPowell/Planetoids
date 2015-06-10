@@ -1,5 +1,6 @@
 #pragma once
 #include "../../Headers/Planetoids.h"
+#include <unordered_map>
 
 class Vertex;
 class Edge;
@@ -14,9 +15,10 @@ class Geom
 public:
 	Geom();
 	~Geom();
-
-	template <typename T>
-	void addAdj(T object);
+	
+	void addAdj(Vertex* v);
+	void addAdj(Edge* e);
+	void addAdj(Face* f);
 	
 	vertex_l getAdjVerts();
 	edge_l	 getAdjEdges();
@@ -28,7 +30,7 @@ private:
 	face_l	 adj_f;
 };
 
-class Vertex : Geom
+class Vertex : public Geom
 {
 public:
 	Vertex();
@@ -50,7 +52,7 @@ private:
 	color3f col;
 };
 
-class Edge : Geom
+class Edge : public Geom
 {
 public:
 	Edge(Vertex* v0, Vertex* v1);
@@ -64,7 +66,7 @@ private:
 	Vertex *v0, *v1;
 };
 
-class Face : Geom
+class Face : public Geom
 {
 public:
 	Face(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);

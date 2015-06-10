@@ -42,6 +42,9 @@
     <ClCompile Include="Source\Mesh\Classes\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Objects\Classes\PObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Player\Camera.h">
@@ -65,5 +68,12 @@
     <ClInclude Include="Source\Mesh\Headers\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Objects\Headers\PObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Shaders\shadertest.frag" />
+    <None Include="Source\Shaders\shadertest.vert" />
   </ItemGroup>
 </Project>

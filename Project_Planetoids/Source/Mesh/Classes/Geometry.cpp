@@ -10,22 +10,26 @@ Geom::~Geom()
 }
 
 //TODO: Add checking to make sure the object has not already been added to the list of adj objects.
-template <typename T>
-void Geom::addAdj(T object)
+void Geom::addAdj(Vertex* v)
 {
-	if (typeid(object).name() == typeid(Vertex).name())
-	{
-		this->adj_v.push_back(object);
-	}
-	else if (typeid(object).name() == typeid(Edge).name())
-	{
-		this->adj_e.push_back(object);
-	}
-	else if (typeid(object).name() == typeid(Face).name())
-	{
-		this->adj_f.push_back(object);
-	}
-	object->addAdj(this); //WILL CAUSE AN INFINITE LOOP AT THE MOMENT. 
+	if (find(adj_v.begin(), adj_v.end(), v) == adj_v.end())
+		this->adj_v.push_back(v);
+	//v->addAdj(this);
+	
+}
+
+void Geom::addAdj(Edge* e)
+{
+	if (find(adj_e.begin(), adj_e.end(), e) == adj_e.end())
+		this->adj_e.push_back(e);
+	//e->addAdj(this); 
+}
+
+void Geom::addAdj(Face* f)
+{
+	if (find(adj_f.begin(), adj_f.end(), f) == adj_f.end())
+		this->adj_f.push_back(f);
+	//f->addAdj(this); 
 }
 
 vertex_l Geom::getAdjVerts()
@@ -167,6 +171,10 @@ void Face::setVertices(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
 	this->vertexList.push_back(v1);
 	this->vertexList.push_back(v2);
 	this->vertexList.push_back(v3);
+	//this->addAdj(v0);
+	//this->addAdj<Vertex>(v1);
+	//this->addAdj<Vertex>(v2);
+	//this->addAdj<Vertex>(v3);
 }
 
 vertex_l Face::getVertices()

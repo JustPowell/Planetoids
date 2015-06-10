@@ -94,7 +94,9 @@ void PlanetMesh::initCube()
 	this->cubeside[0]->bot = this->cubeside[5];
 	this->cubeside[0]->left = this->cubeside[3];
 	this->cubeside[0]->right = this->cubeside[1];
-	this->cubeside[0]->faceList.push_back(new Face(this->getVerts()[0], this->getVerts()[1], this->getVerts()[2], this->getVerts()[3]));
+	Face* f = new Face(this->getVerts()[0], this->getVerts()[3], this->getVerts()[2], this->getVerts()[1]);
+	this->addF(f);
+	this->cubeside[0]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[0]->faceList[0]));
 	//--------------------------------------
 	
@@ -103,7 +105,9 @@ void PlanetMesh::initCube()
 	this->cubeside[1]->bot = this->cubeside[5];
 	this->cubeside[1]->left = this->cubeside[0];
 	this->cubeside[1]->right = this->cubeside[2];
-	this->cubeside[1]->faceList.push_back(new Face(this->getVerts()[1], this->getVerts()[5], this->getVerts()[6], this->getVerts()[2]));
+	f = new Face(this->getVerts()[1], this->getVerts()[2], this->getVerts()[6], this->getVerts()[5]);
+	this->addF(f);
+	this->cubeside[1]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[1]->faceList[0]));
 	//--------------------------------------
 
@@ -112,7 +116,9 @@ void PlanetMesh::initCube()
 	this->cubeside[2]->bot = this->cubeside[5];
 	this->cubeside[2]->left = this->cubeside[1];
 	this->cubeside[2]->right = this->cubeside[3];
-	this->cubeside[2]->faceList.push_back(new Face(this->getVerts()[5], this->getVerts()[4], this->getVerts()[7], this->getVerts()[6]));
+	f = new Face(this->getVerts()[5], this->getVerts()[6], this->getVerts()[7], this->getVerts()[4]);
+	this->addF(f);
+	this->cubeside[2]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[2]->faceList[0]));
 	//--------------------------------------
 
@@ -121,7 +127,9 @@ void PlanetMesh::initCube()
 	this->cubeside[3]->bot = this->cubeside[5];
 	this->cubeside[3]->left = this->cubeside[2];
 	this->cubeside[3]->right = this->cubeside[0];
-	this->cubeside[3]->faceList.push_back(new Face(this->getVerts()[4], this->getVerts()[0], this->getVerts()[3], this->getVerts()[7]));
+	f = new Face(this->getVerts()[4], this->getVerts()[7], this->getVerts()[3], this->getVerts()[0]);
+	this->addF(f);
+	this->cubeside[3]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[3]->faceList[0]));
 	//--------------------------------------
 
@@ -130,7 +138,9 @@ void PlanetMesh::initCube()
 	this->cubeside[4]->bot = this->cubeside[0];
 	this->cubeside[4]->left = this->cubeside[3];
 	this->cubeside[4]->right = this->cubeside[1];
-	this->cubeside[4]->faceList.push_back(new Face(this->getVerts()[4], this->getVerts()[5], this->getVerts()[1], this->getVerts()[0]));
+	f = new Face(this->getVerts()[4], this->getVerts()[0], this->getVerts()[1], this->getVerts()[5]);
+	this->addF(f);
+	this->cubeside[4]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[4]->faceList[0]));
 	//--------------------------------------
 
@@ -139,7 +149,9 @@ void PlanetMesh::initCube()
 	this->cubeside[5]->bot = this->cubeside[2];
 	this->cubeside[5]->left = this->cubeside[3];
 	this->cubeside[5]->right = this->cubeside[1];
-	this->cubeside[5]->faceList.push_back(new Face(this->getVerts()[3], this->getVerts()[2], this->getVerts()[6], this->getVerts()[7]));
+	f = new Face(this->getVerts()[3], this->getVerts()[7], this->getVerts()[6], this->getVerts()[2]);
+	this->addF(f);
+	this->cubeside[5]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[5]->faceList[0]));
 	//--------------------------------------
 	

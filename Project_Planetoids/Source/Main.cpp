@@ -15,40 +15,19 @@ void loadShader(GLuint s_program, string shaderName, GLenum s_type);
 PlanetMesh* rect;
 PlanetMesh::side* side;
 Camera camera;
-float x = 50.0f;
-float y = 50.0f;
-float z = 50.0f;
-float lx = 0.0f;
-float ly = 0.0f;
-float lz = 0.0f;
+
 bool wireframe = false;
 GLfloat r = 10.f;
 
-GLfloat *vertices;
-GLubyte	*indices;
-
-GLfloat verts[] = 
-{
-	-1.f, 1.f, 1.f,
-	1.f, 1.f, 1.f,
-	1.f, -1.f, 1.f, 
-	-1.f, -1.f, 1.f,
-	-1.f, 1.f, -1.f,
-	1.f, 1.f, -1.f,
-	1.f, -1.f, -1.f,
-	-1.f, -1.f, -1.f
-};
-void tempdrawinit();
-void tempdraw(GLFWwindow* window);
 GLfloat colors[] =
 { 1.0f, 0.0f, 0.0f,
-1.0f, 0.0f, 0.0f,
-1.0f, 0.0f, 0.0f,
-1.0f, 0.0f, 0.0f,
-0.0f, 1.0f, 0.0f,
-0.0f, 0.0f, 1.0f,
-1.0f, 0.0f, 0.0f,
-1.0f, 0.0f, 0.0f };
+0.5f, 0.5f, 0.5f,
+0.5f, 0.5f, 0.5f,
+0.5f, 0.5f, 0.5f,
+0.5f, 0.5f, 0.5f,
+0.5f, 0.5f, 0.5f,
+0.5f, 0.5f, 0.5f,
+0.5f, 0.5f, 0.5f };
 
 GLfloat normals[] = {
 	-1.f, 1.f, 1.f,
@@ -61,30 +40,15 @@ GLfloat normals[] = {
 	-1.f, -1.f, -1.f
 };
 
-GLuint indi[] =
-{
-	0, 3, 2, 1,
-	1, 2, 6, 5,
-	5, 6, 7, 4,
-	4, 7, 3, 0,
-	4, 0, 1, 5,
-	3, 7, 6, 2,
-
-};
-
 GLuint u_PMatrix;
 GLuint u_VMatrix;
 GLuint u_MMatrix;
-GLuint u_NormalMatrix;
 
-GLuint vao;
-
-GLuint position;
-GLuint normal;
-GLuint color;
+GLuint a_position;
+GLuint a_normal;
+GLuint a_color;
 
 GLuint shaderProgram;
-GLuint a_color;
 
 // Buffers
 GLuint vBuffer;
@@ -100,34 +64,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	if (key == GLFW_KEY_MINUS && action == GLFW_PRESS)
-	{
-		x++;
-		y++;
-		z++;
-	}
-	if (key == GLFW_KEY_EQUAL && action == GLFW_PRESS)
-	{
-		x--;
-		y--;
-		z--;
-	}
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
-	{
-		ly++;
-	}
-	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
-	{
-		ly--;
-	}
-	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
-	{
-		lx--;
-	}
-	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
-	{
-		lx++;
-	}
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 	{
 		wireframe = false;
@@ -179,7 +115,7 @@ void initBuffers()
 void bindBuffers()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*24, &verts[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*24, &rect->getLocations()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*24, &colors[0], GL_STATIC_DRAW);
@@ -188,7 +124,7 @@ void bindBuffers()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*24, &normals[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, iBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*rect->getNumInd(), &indi[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*rect->getNumInd(), &rect->getIndices()[0], GL_STATIC_DRAW);
 }
 
 void init(GLFWwindow* window)
@@ -198,19 +134,16 @@ void init(GLFWwindow* window)
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = Camera(pos, tar, up);
 	rect = new PlanetMesh(5.0f, SUB_LVL);
-	vertices = &rect->getLocations()[0];
-	indices = &rect->getIndices()[0];
 	
 	initShaders(shaderProgram);
 	
 	u_PMatrix = glGetUniformLocation(shaderProgram, "projection");
 	u_VMatrix = glGetUniformLocation(shaderProgram, "view");
 	u_MMatrix = glGetUniformLocation(shaderProgram, "model");
-	u_NormalMatrix = glGetUniformLocation(shaderProgram, "nm");
 
-	position = glGetAttribLocation(shaderProgram, "position");
-	normal = glGetAttribLocation(shaderProgram, "normal");
-	color = glGetAttribLocation(shaderProgram, "color");
+	a_position = glGetAttribLocation(shaderProgram, "position");
+	a_normal = glGetAttribLocation(shaderProgram, "normal");
+	a_color = glGetAttribLocation(shaderProgram, "color");
 
 	initBuffers();
 	bindBuffers();
@@ -229,16 +162,16 @@ void init(GLFWwindow* window)
 void bindings()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vBuffer);
-	glVertexAttribPointer(position, 3, GL_FLOAT, false, 0, 0);
-	glEnableVertexAttribArray(position);
+	glVertexAttribPointer(a_position, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(a_position);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cBuffer);
-	glVertexAttribPointer(color, 3, GL_FLOAT, false, 0, 0);
-	glEnableVertexAttribArray(color);
+	glVertexAttribPointer(a_color, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(a_color);
 
 	glBindBuffer(GL_ARRAY_BUFFER, nBuffer);
-	glVertexAttribPointer(normal, 3, GL_FLOAT, false, 0, 0);
-	glEnableVertexAttribArray(normal);
+	glVertexAttribPointer(a_normal, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(a_normal);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer);
 }
@@ -262,15 +195,13 @@ void draw(GLFWwindow* window)
 		glCullFace(GL_BACK);
 	}
 
-	glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime()*3.14f, glm::vec3(0.f, 1.f, 0.f));
-	glm::mat4 normalM = glm::transpose(glm::inverse(model));
+	glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime()*1.f, glm::vec3(0.f, 1.f, 0.f));
 
 	bindings();
 	
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(u_NormalMatrix, 1, GL_FLOAT, glm::value_ptr(normalM));
 	
 	glDrawElements(GL_QUADS, rect->getNumInd(), GL_UNSIGNED_INT, 0);
 

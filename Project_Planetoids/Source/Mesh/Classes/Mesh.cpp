@@ -66,7 +66,7 @@ vector<GLfloat> Mesh::getLocations()
 	return this->l_vLocations;
 }
 
-vector<GLubyte> Mesh::getIndices()
+vector<GLuint> Mesh::getIndices()
 {
 	return this->l_indices;
 }

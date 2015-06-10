@@ -19,7 +19,7 @@ public:
 	face_l&   getFaces();
 
 	vector<GLfloat> getLocations(); // Used for drawing
-	vector<GLubyte> getIndices();	 // Used for drawing
+	vector<GLuint> getIndices();	 // Used for drawing
 	int getNumInd();
 
 	typedef unordered_map<Vertex*, int> v_map;
@@ -37,7 +37,7 @@ private:
 	f_map m_faces;
 
 	vector<GLfloat> l_vLocations;
-	vector<GLubyte> l_indices;
+	vector<GLuint> l_indices;
 
 	void storeVertLocation(Vertex* v);
 	void storeIndex(Face* f);

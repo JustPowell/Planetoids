@@ -29,7 +29,7 @@ private:
 	vector<side*> cubeside;
 	GLfloat radius;
 
-	vertex_l calcNewVerts(Face *face);
+	vertex_l calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face *face);
 	void initVertices(int sublvl);
 	void addVert(Vertex *vert);
 	void initCube();

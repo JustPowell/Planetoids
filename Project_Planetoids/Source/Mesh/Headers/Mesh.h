@@ -41,6 +41,7 @@ public:
 	typedef unordered_map<Edge*, int, key_hash, key_equal> e_map;
 
 protected:
+	int num_v, num_e, num_f, num_i;
 	vertex_l l_vertices;
 	edge_l   l_edges;
 	face_l   l_faces;
@@ -49,9 +50,10 @@ protected:
 	e_map m_edges;
 	f_map m_faces;
 
-private:
-	int num_v, num_e, num_f, num_i;
+	void updateLocations();
+	void updateIndex();
 
+private:
 	vector<GLfloat> l_vLocations;
 	vector<GLuint> l_indices;
 

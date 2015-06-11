@@ -195,9 +195,10 @@ color3f Face::getColor() const
 
 vector3f Face::getCentroid()
 {
-	vector3f centroid;
-	get<0>(centroid) = (get<0>(vertexList[0]->getLocation()) + get<0>(vertexList[1]->getLocation()) + get<0>(vertexList[2]->getLocation()) + get<0>(vertexList[3]->getLocation())) / 4;
-	get<1>(centroid) = (get<1>(vertexList[0]->getLocation()) + get<1>(vertexList[1]->getLocation()) + get<1>(vertexList[2]->getLocation()) + get<1>(vertexList[3]->getLocation())) / 4;
-	get<2>(centroid) = (get<2>(vertexList[0]->getLocation()) + get<2>(vertexList[1]->getLocation()) + get<2>(vertexList[2]->getLocation()) + get<2>(vertexList[3]->getLocation())) / 4;
-	return centroid;
+	cout << "HELLO";
+	vector3f cent;
+	get<0>(cent) = (get<0>(vertexList[0]->getLocation()) + get<0>(vertexList[1]->getLocation()) + get<0>(vertexList[2]->getLocation()) + get<0>(vertexList[3]->getLocation())) / 4;
+	get<1>(cent) = (get<1>(vertexList[0]->getLocation()) + get<1>(vertexList[1]->getLocation()) + get<1>(vertexList[2]->getLocation()) + get<1>(vertexList[3]->getLocation())) / 4;
+	get<2>(cent) = (get<2>(vertexList[0]->getLocation()) + get<2>(vertexList[1]->getLocation()) + get<2>(vertexList[2]->getLocation()) + get<2>(vertexList[3]->getLocation())) / 4;
+	return cent;
 }

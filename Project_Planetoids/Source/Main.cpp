@@ -1,7 +1,7 @@
 #include "./Headers/Planetoids.h"
 #include "./Mesh/Headers/PlanetMesh.h"
 
-#define SUB_LVL 3
+#define SUB_LVL 4
 #define planet 0
 
 void init(GLFWwindow* window);
@@ -20,14 +20,17 @@ bool wireframe = false;
 GLfloat r = 10.f;
 
 GLfloat colors[] =
-{ 1.0f, 0.0f, 0.0f,
-0.5f, 0.5f, 0.5f,
-0.5f, 0.5f, 0.5f,
-0.5f, 0.5f, 0.5f,
-0.5f, 0.5f, 0.5f,
-0.5f, 0.5f, 0.5f,
-0.5f, 0.5f, 0.5f,
-0.5f, 0.5f, 0.5f };
+{ 1.0f, 1.0f, 1.0f,
+1.0f, 1.0f, 1.0f,
+1.0f, 1.0f, 1.0f,
+1.0f, 1.0f, 1.0f,
+1.0f, 1.0f, 1.0f,
+1.0f, 1.0f, 1.0f,
+1.0f, 1.0f, 1.0f,
+1.0f, 1.0f, 1.0f };
+
+vector<GLfloat> colors2;
+vector<GLfloat> normals2;
 
 GLfloat normals[] = {
 	-1.f, 1.f, 1.f,
@@ -115,13 +118,13 @@ void initBuffers()
 void bindBuffers()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*24, &rect->getLocations()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &rect->getLocations()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*24, &colors[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &colors2[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, nBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*24, &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &normals2[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, iBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*rect->getNumInd(), &rect->getIndices()[0], GL_STATIC_DRAW);
@@ -134,6 +137,9 @@ void init(GLFWwindow* window)
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = Camera(pos, tar, up);
 	rect = new PlanetMesh(5.0f, SUB_LVL);
+
+	colors2.resize(rect->getVerts().size() * 3, 1.0f);
+	normals2.resize(rect->getVerts().size() * 3, 1.0f);
 	
 	initShaders(shaderProgram);
 	

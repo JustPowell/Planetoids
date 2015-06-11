@@ -145,3 +145,22 @@ Edge* Mesh::checkEdge(Edge* e)
 		return e;
 	}
 }
+
+void Mesh::updateLocations()
+{
+	this->l_vLocations.clear();
+	for (size_t i = 0; i < this->l_vertices.size(); i++)
+	{
+		this->storeVertLocation(this->l_vertices[i]);
+	}
+}
+
+void Mesh::updateIndex()
+{
+	this->l_indices.clear();
+	this->num_i = 0;
+	for (size_t i = 0; i < this->l_faces.size(); i++)
+	{
+		this->storeIndex(this->l_faces[i]);
+	}
+}

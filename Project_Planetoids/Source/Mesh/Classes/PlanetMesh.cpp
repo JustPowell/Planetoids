@@ -5,8 +5,8 @@ PlanetMesh::PlanetMesh(GLfloat r, int sublvl)
 	this->radius = r;
 	this->initVertices(sublvl);
 	this->initCube();
-	//this->subdivide(sublvl);
-	//this->toSphere();
+	this->subdivide(sublvl);
+	this->toSphere();
 } 
 
 
@@ -197,12 +197,21 @@ void PlanetMesh::subdivide(int sublvl)
 	unordered_map<Edge*, Vertex*> newVerts;
 	for (int i = 0; i < sublvl; i++)
 	{
-		face_l templist;
-		size_t size = this->l_faces.size();
+		this->m_edges.clear();
+		this->m_faces.clear();
+
+		face_l templist = this->l_faces;
+		this->l_faces.clear();
+		this->l_edges.clear();
+
+		this->num_e = 0;
+		this->num_f = 0;
+
+		size_t size = templist.size();
 		for (size_t s = 0; s < size; s++)
 		{
-			Face* face = this->l_faces[s];
-			vertex_l newVertl = this->calcNewVerts(face);
+			Face* face = templist[s];
+			vertex_l newVertl = this->calcNewVerts(newVerts, face);
 			
 			for (size_t k = 0; k < newVertl.size(); k++)
 			{
@@ -214,63 +223,66 @@ void PlanetMesh::subdivide(int sublvl)
 			Face *f2 = new Face(newVertl[3], newVertl[4], newVertl[2], face->getVertices()[3]);
 			Face *f3 = new Face(newVertl[4], newVertl[1], face->getVertices()[2], newVertl[2]);
 
-			templist.push_back(f0);
+			this->addF(f0);
+			//templist.push_back(f0);
 			this->addEdges(f0);
 
-			templist.push_back(f1);
+			this->addF(f1);
+			//templist.push_back(f1);
 			this->addEdges(f1);
 
-			templist.push_back(f2);
+			this->addF(f2);
+			//templist.push_back(f2);
 			this->addEdges(f2);
 
-			templist.push_back(f3);
+			this->addF(f3);
+			//templist.push_back(f3);
 			this->addEdges(f3);
 		}
-		this->l_faces = templist;
+		//this->l_faces = templist;
 	}
+	this->updateIndex();
 }
 
-vertex_l PlanetMesh::calcNewVerts(Face *face)
+vertex_l PlanetMesh::calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face *face)
 {
 	vertex_l newVertList;
-	Vertex *v0 = face->getVertices()[0];
-	Vertex *v1 = face->getVertices()[1];
-	Vertex *v2 = face->getVertices()[2];
-	Vertex *v3 = face->getVertices()[3];
 
-	vector3f cl[5];
-	cl[0] = getCentroid(v0, v1);
-	cl[1] = getCentroid(v1, v2);
-	cl[2] = getCentroid(v2, v3);
-	cl[3] = getCentroid(v3, v0);
-	cl[4] = face->getCentroid();
-	/*
-	for (int i = 0; i < 5; i++)
+	for (size_t i = 0; i < face->getEdges().size(); i++)
 	{
-		Vertex *newVert = new Vertex(cl[i]);
-		if (!get<1>(vertexTable.emplace(cl[i], newVert)))
+		Edge* e = face->getEdges()[i];
+		Vertex* cent = new Vertex(getCentroid(e->getVert(0), e->getVert(1)));
+		if (!get<1>(newVerts.emplace(e, cent)))
 		{
-			newVertList.push_back(vertexTable.find(cl[i])->second);
+			newVertList.push_back(newVerts.find(e)->second);
 		}
 		else
 		{
-			this->addVert(newVert);
-			newVertList.push_back(newVert);
+			newVertList.push_back(cent);
 		}
 	}
-	*/
+
+	vector3f cent;
+	get<0>(cent) = (get<0>(face->getVertices()[0]->getLocation()) + get<0>(face->getVertices()[1]->getLocation()) + get<0>(face->getVertices()[2]->getLocation()) + get<0>(face->getVertices()[3]->getLocation())) / 4;
+	get<1>(cent) = (get<1>(face->getVertices()[0]->getLocation()) + get<1>(face->getVertices()[1]->getLocation()) + get<1>(face->getVertices()[2]->getLocation()) + get<1>(face->getVertices()[3]->getLocation())) / 4;
+	get<2>(cent) = (get<2>(face->getVertices()[0]->getLocation()) + get<2>(face->getVertices()[1]->getLocation()) + get<2>(face->getVertices()[2]->getLocation()) + get<2>(face->getVertices()[3]->getLocation())) / 4;
+
+	Vertex* faceCent = new Vertex(cent);
+	newVertList.push_back(faceCent);
+
 	return newVertList;
 }
-/*
+
 void PlanetMesh::toSphere()
 {
-	vertexMap newTable;
+	//vertexMap newTable;
 	int count = 0;
-	for (auto it = this->vertexTable.begin(); it != this->vertexTable.end(); ++it)
+	for (size_t i = 0; i < this->num_v; i++)
+	//for (auto it = this->vertexTable.begin(); it != this->vertexTable.end(); ++it)
 	{
 		count++;
 		vector3f newloc;
-		vector3f loc = it->second->getLocation();
+		vector3f loc = this->l_vertices[i]->getLocation();
 
 		GLfloat theta, phi;
 		theta = acos((get<2>(loc) / sqrt( pow(get<0>(loc), 2) + pow(get<1>(loc), 2) + pow(get<2>(loc), 2))));
@@ -280,8 +292,7 @@ void PlanetMesh::toSphere()
 		get<1>(newloc) = this->radius * sin(theta) * sin(phi);
 		get<2>(newloc) = this->radius * cos(theta);
 
-		it->second->setLocation(newloc);
-		//newTable.emplace(it->second->getLocation(), it->second);
+		this->l_vertices[i]->setLocation(newloc);
 	}
-	vertexTable = newTable;
-}*/
+	this->updateLocations();
+}

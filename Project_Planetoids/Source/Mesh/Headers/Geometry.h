@@ -10,27 +10,7 @@ typedef vector<Vertex*> vertex_l;
 typedef vector<Edge*> edge_l;
 typedef vector<Face*> face_l;
 
-class Geom
-{
-public:
-	Geom();
-	~Geom();
-	
-	void addAdj(Vertex* v);
-	void addAdj(Edge* e);
-	void addAdj(Face* f);
-	
-	vertex_l getAdjVerts();
-	edge_l	 getAdjEdges();
-	face_l	 getAdjFaces();
-
-private:
-	vertex_l adj_v;
-	edge_l	 adj_e;
-	face_l	 adj_f;
-};
-
-class Vertex : public Geom
+class Vertex
 {
 public:
 	Vertex();
@@ -41,39 +21,56 @@ public:
 	void setLocation(vector3f loc);
 	void setNormal(normal3f nor);
 	void setColor(color3f col);
+	void addAdjEdge(Edge* e);
+	void addAdjFace(Face* f);
 
 	vector3f getLocation() const;
 	normal3f getNormal() const;
-	color3f getColor() const;
+	color3f  getColor() const;
+	edge_l   getAdjEdges() const;
+	face_l   getAdjFaces() const;
 
 private:
 	vector3f loc;
 	normal3f nor;
 	color3f col;
+
+	edge_l adj_e;
+	face_l adj_f;
 };
 
-class Edge : public Geom
+class Edge
 {
 public:
 	Edge(Vertex* v0, Vertex* v1);
 	~Edge();
 
+	void addAdjVertex(Vertex* v);
+	void addAdjFace(Face* f);
+
 	Vertex* getVert(int v);
 	Vertex* getOther(int v);
 	vector3f getCentroid() const;
+	vertex_l getAdjVertices();
+	face_l getAdjFaces();
 
 private:
 	Vertex *v0, *v1;
+
+	vertex_l adj_v;
+	face_l	 adj_f;
 };
 
-class Face : public Geom
+class Face
 {
 public:
 	Face(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);
 	~Face();
 
 	void	 setVertices(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3);
+	void	 addEdge(Edge* e);
 	vertex_l getVertices();
+	edge_l   getEdges();
 	vector3f getCentroid();
 	color3f  getColor() const;
 

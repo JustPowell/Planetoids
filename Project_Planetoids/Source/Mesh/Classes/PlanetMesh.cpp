@@ -96,6 +96,7 @@ void PlanetMesh::initCube()
 	this->cubeside[0]->right = this->cubeside[1];
 	Face* f = new Face(this->getVerts()[0], this->getVerts()[3], this->getVerts()[2], this->getVerts()[1]);
 	this->addF(f);
+	this->addEdges(f);
 	this->cubeside[0]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[0]->faceList[0]));
 	//--------------------------------------
@@ -107,6 +108,7 @@ void PlanetMesh::initCube()
 	this->cubeside[1]->right = this->cubeside[2];
 	f = new Face(this->getVerts()[1], this->getVerts()[2], this->getVerts()[6], this->getVerts()[5]);
 	this->addF(f);
+	this->addEdges(f);
 	this->cubeside[1]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[1]->faceList[0]));
 	//--------------------------------------
@@ -118,6 +120,7 @@ void PlanetMesh::initCube()
 	this->cubeside[2]->right = this->cubeside[3];
 	f = new Face(this->getVerts()[5], this->getVerts()[6], this->getVerts()[7], this->getVerts()[4]);
 	this->addF(f);
+	this->addEdges(f);
 	this->cubeside[2]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[2]->faceList[0]));
 	//--------------------------------------
@@ -129,6 +132,7 @@ void PlanetMesh::initCube()
 	this->cubeside[3]->right = this->cubeside[0];
 	f = new Face(this->getVerts()[4], this->getVerts()[7], this->getVerts()[3], this->getVerts()[0]);
 	this->addF(f);
+	this->addEdges(f);
 	this->cubeside[3]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[3]->faceList[0]));
 	//--------------------------------------
@@ -140,6 +144,7 @@ void PlanetMesh::initCube()
 	this->cubeside[4]->right = this->cubeside[1];
 	f = new Face(this->getVerts()[4], this->getVerts()[0], this->getVerts()[1], this->getVerts()[5]);
 	this->addF(f);
+	this->addEdges(f);
 	this->cubeside[4]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[4]->faceList[0]));
 	//--------------------------------------
@@ -151,12 +156,13 @@ void PlanetMesh::initCube()
 	this->cubeside[5]->right = this->cubeside[1];
 	f = new Face(this->getVerts()[3], this->getVerts()[7], this->getVerts()[6], this->getVerts()[2]);
 	this->addF(f);
+	this->addEdges(f);
 	this->cubeside[5]->faceList.push_back(f);
 	//this->quadtrees.push_back(new Quadtree(this->cubeside[5]->faceList[0]));
 	//--------------------------------------
 	
 }
-
+/*
 void PlanetMesh::subdivide(int sublvl)
 {
 	for (int i = 0; i < sublvl; i++)
@@ -166,21 +172,9 @@ void PlanetMesh::subdivide(int sublvl)
 			face_l tempFacel;
 			int size = this->cubeside[s]->faceList.size();
 
-			/*vector<Quad*> quadlist;
-			if (i == 0)
-			{
-				vector<Quad*> temp;
-				temp.push_back(quadtrees[s]->getRoot());
-				quadlist = temp;
-			}
-			else{
-				quadlist = this->quadtrees[s]->getQuadlist(i);
-			}*/
-
 			for (int f = 0; f < size; f++)
 			{
 				Face *face = this->cubeside[s]->faceList[f];
-				//Quad *quad = quadlist[f];
 
 				vertex_l newVertl = this->calcNewVerts(face);
 				Face *f0 = new Face(face->getVertices()[0], newVertl[0], newVertl[4], newVertl[3]);
@@ -189,19 +183,50 @@ void PlanetMesh::subdivide(int sublvl)
 				Face *f3 = new Face(newVertl[4], newVertl[1], face->getVertices()[2], newVertl[2]);
 
 				tempFacel.push_back(f0);
-				//quad->addNode(0, f0);
-
 				tempFacel.push_back(f1);
-				//quad->addNode(1, f1);
-
 				tempFacel.push_back(f2);
-				//quad->addNode(2, f2);
-
 				tempFacel.push_back(f3);
-				//quad->addNode(3, f3);
 			}
 			cubeside[s]->faceList = tempFacel;
 		}
+	}
+}
+*/
+void PlanetMesh::subdivide(int sublvl)
+{
+	unordered_map<Edge*, Vertex*> newVerts;
+	for (int i = 0; i < sublvl; i++)
+	{
+		face_l templist;
+		size_t size = this->l_faces.size();
+		for (size_t s = 0; s < size; s++)
+		{
+			Face* face = this->l_faces[s];
+			vertex_l newVertl = this->calcNewVerts(face);
+			
+			for (size_t k = 0; k < newVertl.size(); k++)
+			{
+				this->addV(newVertl[k]);
+			}
+
+			Face *f0 = new Face(face->getVertices()[0], newVertl[0], newVertl[4], newVertl[3]);
+			Face *f1 = new Face(newVertl[0], face->getVertices()[1], newVertl[1], newVertl[4]);
+			Face *f2 = new Face(newVertl[3], newVertl[4], newVertl[2], face->getVertices()[3]);
+			Face *f3 = new Face(newVertl[4], newVertl[1], face->getVertices()[2], newVertl[2]);
+
+			templist.push_back(f0);
+			this->addEdges(f0);
+
+			templist.push_back(f1);
+			this->addEdges(f1);
+
+			templist.push_back(f2);
+			this->addEdges(f2);
+
+			templist.push_back(f3);
+			this->addEdges(f3);
+		}
+		this->l_faces = templist;
 	}
 }
 

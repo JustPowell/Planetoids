@@ -12,6 +12,7 @@ public:
 	void addV(Vertex* v);
 	void addE(Edge* e);
 	void addF(Face* f);
+	void addEdges(Face* f);
 
 	vertex_l& getVerts();
 
@@ -23,11 +24,23 @@ public:
 	int getNumInd();
 
 	typedef unordered_map<Vertex*, int> v_map;
-	typedef unordered_map<Edge*, int>   e_map;
 	typedef unordered_map<Face*, int>   f_map;
-private:
-	int num_v, num_e, num_f, num_i;
 
+	struct key_hash : public unary_function<Edge, size_t>{
+		size_t operator()(Edge* k) const{
+			return ((int)k->getVert(0) ^ (int)k->getVert(1));
+		}
+	};
+
+	struct key_equal : public binary_function<Edge, Edge, bool>{
+		bool operator()(Edge* e0, Edge* e1) const{
+			return ((e0->getVert(0) == e1->getVert(0) && e0->getVert(1) == e1->getVert(1))
+				 || (e0->getVert(0) == e1->getVert(1) && e0->getVert(1) == e1->getVert(0)));
+		}
+	};
+	typedef unordered_map<Edge*, int, key_hash, key_equal> e_map;
+
+protected:
 	vertex_l l_vertices;
 	edge_l   l_edges;
 	face_l   l_faces;
@@ -36,10 +49,15 @@ private:
 	e_map m_edges;
 	f_map m_faces;
 
+private:
+	int num_v, num_e, num_f, num_i;
+
 	vector<GLfloat> l_vLocations;
 	vector<GLuint> l_indices;
 
 	void storeVertLocation(Vertex* v);
 	void storeIndex(Face* f);
+
+	Edge* checkEdge(Edge* e);
 };
 

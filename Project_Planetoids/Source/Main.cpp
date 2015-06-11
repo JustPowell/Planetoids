@@ -90,7 +90,7 @@ int main(void)
 	glfwSwapInterval(1);
 	glfwSetKeyCallback(window, key_callback);
 	glewInit();
-
+	
 	shaderProgram = glCreateProgram();
 
 	init(window);

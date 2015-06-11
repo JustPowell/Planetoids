@@ -1,52 +1,5 @@
 #include "../Headers/Geometry.h"
 
-//Geometry class. Contains adjacency information.
-Geom::Geom()
-{
-}
-
-Geom::~Geom()
-{
-}
-
-//TODO: Add checking to make sure the object has not already been added to the list of adj objects.
-void Geom::addAdj(Vertex* v)
-{
-	if (find(adj_v.begin(), adj_v.end(), v) == adj_v.end())
-		this->adj_v.push_back(v);
-	//v->addAdj(this);
-	
-}
-
-void Geom::addAdj(Edge* e)
-{
-	if (find(adj_e.begin(), adj_e.end(), e) == adj_e.end())
-		this->adj_e.push_back(e);
-	//e->addAdj(this); 
-}
-
-void Geom::addAdj(Face* f)
-{
-	if (find(adj_f.begin(), adj_f.end(), f) == adj_f.end())
-		this->adj_f.push_back(f);
-	//f->addAdj(this); 
-}
-
-vertex_l Geom::getAdjVerts()
-{
-	return this->adj_v;
-}
-
-edge_l Geom::getAdjEdges()
-{
-	return this->adj_e;
-}
-
-face_l Geom::getAdjFaces()
-{
-	return this->adj_f;
-}
-
 //Vertex Class
 Vertex::Vertex()
 {
@@ -86,6 +39,16 @@ void Vertex::setColor(color3f col)
 	this->col = col;
 }
 
+void Vertex::addAdjEdge(Edge* e)
+{
+	this->adj_e.push_back(e);
+}
+
+void Vertex::addAdjFace(Face* f)
+{
+	this->adj_f.push_back(f);
+}
+
 vector3f Vertex::getLocation() const
 {
 	return this->loc;
@@ -101,17 +64,39 @@ color3f Vertex::getColor() const
 	return this->col;
 }
 
+edge_l Vertex::getAdjEdges() const
+{
+	return this->adj_e;
+}
+
+face_l Vertex::getAdjFaces() const
+{
+	return this->adj_f;
+}
+
 //Edge Class
 Edge::Edge(Vertex* v0, Vertex* v1)
 {
 	this->v0 = v0;
 	this->v1 = v1;
-	//this->addAdj(v0); //Need to add checkin in adj before use.
-	//this->addAdj(v1);
+	this->addAdjVertex(v0);
+	this->addAdjVertex(v1);
+	v0->addAdjEdge(this);
+	v1->addAdjEdge(this);
 }
 
 Edge::~Edge()
 {
+}
+
+void Edge::addAdjVertex(Vertex* v)
+{
+	this->adj_v.push_back(v);
+}
+
+void Edge::addAdjFace(Face* f)
+{
+	this->adj_f.push_back(f);
 }
 
 /*
@@ -152,6 +137,16 @@ vector3f Edge::getCentroid() const
 	return centroid;
 }
 
+vertex_l Edge::getAdjVertices()
+{
+	return this->adj_v;
+}
+
+face_l Edge::getAdjFaces()
+{
+	return this->adj_f;
+}
+
 //Face Class
 Face::Face(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
 {
@@ -171,15 +166,26 @@ void Face::setVertices(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
 	this->vertexList.push_back(v1);
 	this->vertexList.push_back(v2);
 	this->vertexList.push_back(v3);
-	//this->addAdj(v0);
-	//this->addAdj<Vertex>(v1);
-	//this->addAdj<Vertex>(v2);
-	//this->addAdj<Vertex>(v3);
+	v0->addAdjFace(this);
+	v1->addAdjFace(this);
+	v2->addAdjFace(this);
+	v3->addAdjFace(this);
+}
+
+void Face::addEdge(Edge* e)
+{
+	edgeList.push_back(e);
+	e->addAdjFace(this);
 }
 
 vertex_l Face::getVertices()
 {
 	return this->vertexList;
+}
+
+edge_l Face::getEdges()
+{
+	return this->edgeList;
 }
 
 color3f Face::getColor() const

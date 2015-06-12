@@ -8,9 +8,11 @@ Vertex::Vertex()
 Vertex::Vertex(vector3f loc)
 {
 	this->loc = loc;
-	get<0>(this->col) = (float)(rand() % 255) / 255;
-	get<1>(this->col) = (float)(rand() % 255) / 255;
-	get<2>(this->col) = (float)(rand() % 255) / 255;
+	this->nor = glm::vec3(0.f, 0.f, 0.f);
+	this->col = glm::vec3((float)(rand() % 255) / 255, (float)(rand() % 255) / 255, (float)(rand() % 255) / 255);
+	//get<0>(this->col) = (float)(rand() % 255) / 255;
+	//get<1>(this->col) = (float)(rand() % 255) / 255;
+	//get<2>(this->col) = (float)(rand() % 255) / 255;
 }
 
 Vertex::Vertex(vector3f loc, normal3f nor, color3f col)
@@ -130,11 +132,11 @@ Vertex* Edge::getOther(int v)
 
 vector3f Edge::getCentroid() const
 {
-	vector3f centroid;
-	get<0>(centroid) = (get<0>(v0->getLocation()) + get<0>(v1->getLocation())) / 2;
-	get<1>(centroid) = (get<1>(v0->getLocation()) + get<1>(v1->getLocation())) / 2;
-	get<2>(centroid) = (get<2>(v0->getLocation()) + get<2>(v1->getLocation())) / 2;
-	return centroid;
+	vector3f cent;
+	cent.x = (v0->getLocation().x + v1->getLocation().x) / 2;
+	cent.y = (v0->getLocation().y + v1->getLocation().y) / 2;
+	cent.z = (v0->getLocation().z + v1->getLocation().z) / 2;
+	return cent;
 }
 
 vertex_l Edge::getAdjVertices()
@@ -151,9 +153,9 @@ face_l Edge::getAdjFaces()
 Face::Face(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
 {
 	this->setVertices(v0, v1, v2, v3);
-	get<0>(this->color) = (float)(rand() % 255) / 255;
-	get<1>(this->color) = (float)(rand() % 255) / 255;
-	get<2>(this->color) = (float)(rand() % 255) / 255;
+	//get<0>(this->color) = (float)(rand() % 255) / 255;
+	//get<1>(this->color) = (float)(rand() % 255) / 255;
+	//get<2>(this->color) = (float)(rand() % 255) / 255;
 }
 
 Face::~Face()
@@ -193,12 +195,12 @@ color3f Face::getColor() const
 	return this->color;
 }
 
-vector3f Face::getCentroid()
+void Face::setNormal(glm::vec3& norm)
 {
-	cout << "HELLO";
-	vector3f cent;
-	get<0>(cent) = (get<0>(vertexList[0]->getLocation()) + get<0>(vertexList[1]->getLocation()) + get<0>(vertexList[2]->getLocation()) + get<0>(vertexList[3]->getLocation())) / 4;
-	get<1>(cent) = (get<1>(vertexList[0]->getLocation()) + get<1>(vertexList[1]->getLocation()) + get<1>(vertexList[2]->getLocation()) + get<1>(vertexList[3]->getLocation())) / 4;
-	get<2>(cent) = (get<2>(vertexList[0]->getLocation()) + get<2>(vertexList[1]->getLocation()) + get<2>(vertexList[2]->getLocation()) + get<2>(vertexList[3]->getLocation())) / 4;
-	return cent;
+	this->f_normal = norm;
+}
+
+normal3f Face::getNormal()
+{
+	return this->f_normal;
 }

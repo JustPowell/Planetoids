@@ -74,17 +74,24 @@ public:
 	vector3f getCentroid();
 	color3f  getColor() const;
 
+	void setNormal(glm::vec3& norm);
+	normal3f getNormal();
+
 private:
 	vertex_l vertexList;
 	edge_l	 edgeList;
 	color3f  color;
+
+	normal3f f_normal;
+
+	
 };
 
 inline vector3f getCentroid(const Vertex* v0, const Vertex* v1) //TEMPORARY FUNCTION
 {
-	vector3f centroid;
-	get<0>(centroid) = (get<0>(v0->getLocation()) + get<0>(v1->getLocation())) / 2;
-	get<1>(centroid) = (get<1>(v0->getLocation()) + get<1>(v1->getLocation())) / 2;
-	get<2>(centroid) = (get<2>(v0->getLocation()) + get<2>(v1->getLocation())) / 2;
-	return centroid;
+	vector3f cent;
+	cent.x = (v0->getLocation().x + v1->getLocation().x) / 2;
+	cent.y = (v0->getLocation().y + v1->getLocation().y) / 2;
+	cent.z = (v0->getLocation().z + v1->getLocation().z) / 2;
+	return cent;
 }

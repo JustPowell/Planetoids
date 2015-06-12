@@ -22,6 +22,7 @@ void Mesh::addV(Vertex* v)
 	{
 		this->l_vertices.push_back(v);
 		this->storeVertLocation(v);
+		this->storeColor(v);
 	}
 	else
 	{
@@ -91,6 +92,17 @@ vector<GLuint> Mesh::getIndices()
 {
 	return this->l_indices;
 }
+
+vector<GLfloat> Mesh::getNormals()
+{
+	return this->l_normals;
+}
+
+vector<GLfloat> Mesh::getColors()
+{
+	return this->l_colors;
+}
+
 //-------------------------------------
 /*
 	As Vertices are added to the mesh, store their location in a list that can be returned for drawing.
@@ -98,9 +110,25 @@ vector<GLuint> Mesh::getIndices()
 void Mesh::storeVertLocation(Vertex* v)
 {
 	vector3f loc = v->getLocation();
-	this->l_vLocations.push_back(get<0>(loc));
-	this->l_vLocations.push_back(get<1>(loc));
-	this->l_vLocations.push_back(get<2>(loc));
+	this->l_vLocations.push_back(loc.x);
+	this->l_vLocations.push_back(loc.y);
+	this->l_vLocations.push_back(loc.z);
+}
+
+void Mesh::storeNormals(Vertex* v)
+{
+	vector3f nor = v->getNormal();
+	this->l_normals.push_back(nor.x);
+	this->l_normals.push_back(nor.y);
+	this->l_normals.push_back(nor.z);
+}
+
+void Mesh::storeColor(Vertex* v)
+{
+	vector3f col = v->getColor();
+	this->l_colors.push_back(col.x);
+	this->l_colors.push_back(col.y);
+	this->l_colors.push_back(col.z);
 }
 
 /*
@@ -153,6 +181,11 @@ void Mesh::updateLocations()
 	{
 		this->storeVertLocation(this->l_vertices[i]);
 	}
+	for (size_t i = 0; i < this->l_faces.size(); i++)
+	{
+		this->calcFaceNormal(this->l_faces[i]);
+	}
+	this->calcNormals();
 }
 
 void Mesh::updateIndex()
@@ -163,4 +196,43 @@ void Mesh::updateIndex()
 	{
 		this->storeIndex(this->l_faces[i]);
 	}
+}
+
+void Mesh::calcNormals()
+{
+	
+	for (size_t i = 0; i < this->l_faces.size(); i++)
+	{
+		Face* f = this->l_faces[i];
+		for (size_t k = 0; k < f->getVertices().size(); k++)
+		{
+			Vertex* v = f->getVertices()[k];
+			v->setNormal(v->getNormal() + f->getNormal());
+		}
+	}
+	for (size_t j = 0; j < this->l_vertices.size(); j++)
+	{
+		glm::vec3 norm;
+		Vertex* v = this->l_vertices[j];
+		norm.x = v->getNormal().x / 4;
+		norm.y = v->getNormal().y / 4;
+		norm.z = v->getNormal().z / 4;
+		v->setNormal(norm);
+		this->storeNormals(v);
+	}
+}
+
+void Mesh::calcFaceNormal(Face* f)
+{
+	glm::vec3 v0 = f->getVertices()[0]->getLocation();
+	glm::vec3 v1 = f->getVertices()[1]->getLocation();
+	glm::vec3 v2 = f->getVertices()[2]->getLocation();
+	
+	glm::vec3 a, b;
+	a = v0 - v1;
+	b = v2 - v1;
+
+	glm::vec3 norm = glm::normalize(glm::cross(a, b));
+	//printf("%f, %f, %f\n", norm.x, norm.y, norm.z);
+	f->setNormal(norm);
 }

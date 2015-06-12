@@ -21,6 +21,9 @@ public:
 
 	vector<GLfloat> getLocations(); // Used for drawing
 	vector<GLuint> getIndices();	 // Used for drawing
+	vector<GLfloat> getNormals();
+	vector<GLfloat> getColors();
+
 	int getNumInd();
 
 	typedef unordered_map<Vertex*, int> v_map;
@@ -52,13 +55,19 @@ protected:
 
 	void updateLocations();
 	void updateIndex();
+	void calcNormals();
+	void calcFaceNormal(Face* f);
 
 private:
 	vector<GLfloat> l_vLocations;
 	vector<GLuint> l_indices;
+	vector<GLfloat> l_normals;
+	vector<GLfloat> l_colors;
 
 	void storeVertLocation(Vertex* v);
 	void storeIndex(Face* f);
+	void storeNormals(Vertex* v);
+	void storeColor(Vertex* v);
 
 	Edge* checkEdge(Edge* e);
 };

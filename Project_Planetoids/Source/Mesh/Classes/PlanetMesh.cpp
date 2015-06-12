@@ -263,9 +263,9 @@ vertex_l PlanetMesh::calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face 
 	}
 
 	vector3f cent;
-	get<0>(cent) = (get<0>(face->getVertices()[0]->getLocation()) + get<0>(face->getVertices()[1]->getLocation()) + get<0>(face->getVertices()[2]->getLocation()) + get<0>(face->getVertices()[3]->getLocation())) / 4;
-	get<1>(cent) = (get<1>(face->getVertices()[0]->getLocation()) + get<1>(face->getVertices()[1]->getLocation()) + get<1>(face->getVertices()[2]->getLocation()) + get<1>(face->getVertices()[3]->getLocation())) / 4;
-	get<2>(cent) = (get<2>(face->getVertices()[0]->getLocation()) + get<2>(face->getVertices()[1]->getLocation()) + get<2>(face->getVertices()[2]->getLocation()) + get<2>(face->getVertices()[3]->getLocation())) / 4;
+	cent.x = (face->getVertices()[0]->getLocation().x + face->getVertices()[1]->getLocation().x + face->getVertices()[2]->getLocation().x + face->getVertices()[3]->getLocation().x) / 4;
+	cent.y = (face->getVertices()[0]->getLocation().y + face->getVertices()[1]->getLocation().y + face->getVertices()[2]->getLocation().y + face->getVertices()[3]->getLocation().y) / 4;
+	cent.z = (face->getVertices()[0]->getLocation().z + face->getVertices()[1]->getLocation().z + face->getVertices()[2]->getLocation().z + face->getVertices()[3]->getLocation().z) / 4;
 
 	Vertex* faceCent = new Vertex(cent);
 	newVertList.push_back(faceCent);
@@ -285,12 +285,12 @@ void PlanetMesh::toSphere()
 		vector3f loc = this->l_vertices[i]->getLocation();
 
 		GLfloat theta, phi;
-		theta = acos((get<2>(loc) / sqrt( pow(get<0>(loc), 2) + pow(get<1>(loc), 2) + pow(get<2>(loc), 2))));
-		phi = atan2(get<1>(loc), get<0>(loc));
+		theta = acos((loc.z / sqrt( pow(loc.x, 2) + pow(loc.y, 2) + pow(loc.z, 2))));
+		phi = atan2(loc.y, loc.x);
 
-		get<0>(newloc) = this->radius * sin(theta) * cos(phi);
-		get<1>(newloc) = this->radius * sin(theta) * sin(phi);
-		get<2>(newloc) = this->radius * cos(theta);
+		newloc.x = this->radius * sin(theta) * cos(phi);
+		newloc.y = this->radius * sin(theta) * sin(phi);
+		newloc.z = this->radius * cos(theta);
 
 		this->l_vertices[i]->setLocation(newloc);
 	}

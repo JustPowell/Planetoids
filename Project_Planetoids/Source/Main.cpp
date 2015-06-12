@@ -1,7 +1,7 @@
 #include "./Headers/Planetoids.h"
 #include "./Mesh/Headers/PlanetMesh.h"
 
-#define SUB_LVL 4
+#define SUB_LVL 7
 #define planet 0
 
 void init(GLFWwindow* window);
@@ -90,7 +90,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 	glfwSetKeyCallback(window, key_callback);
 	glewInit();
 	
@@ -121,10 +121,10 @@ void bindBuffers()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &rect->getLocations()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &colors2[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &rect->getColors()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, nBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &normals2[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &rect->getNormals()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, iBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*rect->getNumInd(), &rect->getIndices()[0], GL_STATIC_DRAW);
@@ -132,11 +132,11 @@ void bindBuffers()
 
 void init(GLFWwindow* window)
 {
-	glm::vec3 pos(10.f, 10.f, 10.f);
+	glm::vec3 pos(0.f, 0.f, 20.f);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = Camera(pos, tar, up);
-	rect = new PlanetMesh(5.0f, SUB_LVL);
+	rect = new PlanetMesh(10.0f, SUB_LVL);
 
 	colors2.resize(rect->getVerts().size() * 3, 1.0f);
 	normals2.resize(rect->getVerts().size() * 3, 1.0f);
@@ -150,7 +150,7 @@ void init(GLFWwindow* window)
 	a_position = glGetAttribLocation(shaderProgram, "position");
 	a_normal = glGetAttribLocation(shaderProgram, "normal");
 	a_color = glGetAttribLocation(shaderProgram, "color");
-
+	  
 	initBuffers();
 	bindBuffers();
 
@@ -158,11 +158,12 @@ void init(GLFWwindow* window)
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	ratio = width / (float)height;
-	glViewport(0, 0, width, height);
+	
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(30, width / height, 0, 30);
+	glViewport(0, 0, width, height);
+	//gluPerspective(30, width / height, 0, 30);
 }
 
 void bindings()

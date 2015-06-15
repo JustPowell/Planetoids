@@ -10,6 +10,7 @@ Vertex::Vertex(vector3f loc)
 	this->loc = loc;
 	this->nor = glm::vec3(0.f, 0.f, 0.f);
 	this->col = glm::vec3((float)(rand() % 255) / 255, (float)(rand() % 255) / 255, (float)(rand() % 255) / 255);
+	//this->col = glm::vec3(1.0f);
 	//get<0>(this->col) = (float)(rand() % 255) / 255;
 	//get<1>(this->col) = (float)(rand() % 255) / 255;
 	//get<2>(this->col) = (float)(rand() % 255) / 255;

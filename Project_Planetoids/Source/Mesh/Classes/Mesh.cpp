@@ -227,12 +227,17 @@ void Mesh::calcFaceNormal(Face* f)
 	glm::vec3 v0 = f->getVertices()[0]->getLocation();
 	glm::vec3 v1 = f->getVertices()[1]->getLocation();
 	glm::vec3 v2 = f->getVertices()[2]->getLocation();
-	
+	glm::vec3 v3 = f->getVertices()[3]->getLocation();
+
 	glm::vec3 a, b;
 	a = v0 - v1;
 	b = v2 - v1;
 
-	glm::vec3 norm = glm::normalize(glm::cross(a, b));
-	//printf("%f, %f, %f\n", norm.x, norm.y, norm.z);
+	glm::vec3 c, d;
+	c = v3 - v0;
+	d = v1 - v0;
+
+	glm::vec3 norm = glm::normalize(glm::cross(a, b) + glm::cross(c, d));
+	
 	f->setNormal(norm);
 }

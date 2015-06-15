@@ -1,14 +1,14 @@
 #include "./Headers/Planetoids.h"
 #include "./Mesh/Headers/PlanetMesh.h"
 
-#define SUB_LVL 7
+#define SUB_LVL 5
 #define planet 0
 
 void init(GLFWwindow* window);
-void draw(GLFWwindow* window);
+void draw(GLFWwindow* window, GLuint s_program, int wireframe);
 void update();
 
-void initShaders(GLuint s_program);
+void initShaders(GLuint s_program, string vShader, string fShader);
 void createShader(GLuint s_program, const char* shaderText, GLenum s_type);
 void loadShader(GLuint s_program, string shaderName, GLenum s_type);
 
@@ -19,30 +19,6 @@ Camera camera;
 bool wireframe = false;
 GLfloat r = 10.f;
 
-GLfloat colors[] =
-{ 1.0f, 1.0f, 1.0f,
-1.0f, 1.0f, 1.0f,
-1.0f, 1.0f, 1.0f,
-1.0f, 1.0f, 1.0f,
-1.0f, 1.0f, 1.0f,
-1.0f, 1.0f, 1.0f,
-1.0f, 1.0f, 1.0f,
-1.0f, 1.0f, 1.0f };
-
-vector<GLfloat> colors2;
-vector<GLfloat> normals2;
-
-GLfloat normals[] = {
-	-1.f, 1.f, 1.f,
-	1.f, 1.f, 1.f,
-	1.f, -1.f, 1.f,
-	-1.f, -1.f, 1.f,
-	-1.f, 1.f, -1.f,
-	1.f, 1.f, -1.f,
-	1.f, -1.f, -1.f,
-	-1.f, -1.f, -1.f
-};
-
 GLuint u_PMatrix;
 GLuint u_VMatrix;
 GLuint u_MMatrix;
@@ -52,6 +28,7 @@ GLuint a_normal;
 GLuint a_color;
 
 GLuint shaderProgram;
+GLuint shaderProgram2;
 
 // Buffers
 GLuint vBuffer;
@@ -95,11 +72,16 @@ int main(void)
 	glewInit();
 	
 	shaderProgram = glCreateProgram();
+	shaderProgram2 = glCreateProgram();
 
 	init(window);
 	while (!glfwWindowShouldClose(window))
 	{
-		draw(window);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		draw(window, shaderProgram2, 1);
+		draw(window, shaderProgram, 0);
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 	
 	glfwDestroyWindow(window);
@@ -132,16 +114,15 @@ void bindBuffers()
 
 void init(GLFWwindow* window)
 {
-	glm::vec3 pos(0.f, 0.f, 20.f);
+	//glm::vec3 pos(-120.f, 0.f, 0.f);
+	glm::vec3 pos(0.f, 0.f, 120.f);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = Camera(pos, tar, up);
-	rect = new PlanetMesh(10.0f, SUB_LVL);
-
-	colors2.resize(rect->getVerts().size() * 3, 1.0f);
-	normals2.resize(rect->getVerts().size() * 3, 1.0f);
+	rect = new PlanetMesh(100.0f, SUB_LVL);
 	
-	initShaders(shaderProgram);
+	initShaders(shaderProgram, "shadertest.vert", "shadertest.frag");
+	initShaders(shaderProgram2, "shadertest.vert", "shadertest2.frag");
 	
 	u_PMatrix = glGetUniformLocation(shaderProgram, "projection");
 	u_VMatrix = glGetUniformLocation(shaderProgram, "view");
@@ -158,12 +139,12 @@ void init(GLFWwindow* window)
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	ratio = width / (float)height;
-	
+
+	glEnable(GL_DEPTH_TEST);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, width, height);
-	//gluPerspective(30, width / height, 0, 30);
 }
 
 void bindings()
@@ -183,37 +164,38 @@ void bindings()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBuffer);
 }
 
-void draw(GLFWwindow* window)
+void draw(GLFWwindow* window, GLuint s_program, int wireframe)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(s_program);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	glEnable(GL_CULL_FACE);
+	
 	if (wireframe)
 	{
+		glDepthRange(0.0, 0.99999);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDisable(GL_CULL_FACE);
 	}
 	else
 	{
+		glDepthRange(0.0, 1.0);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
 	}
 
-	glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime()*1.f, glm::vec3(0.f, 1.f, 0.f));
-
-	bindings();
+	glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime()*.5f, glm::vec3(0.f, 1.f, 0.f));
+	//glm::mat4 model(1.0f);
 	
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(model));
 	
+	bindings();
+
 	glDrawElements(GL_QUADS, rect->getNumInd(), GL_UNSIGNED_INT, 0);
 
-	glfwSwapBuffers(window);
-	glfwPollEvents();
+	
 }
 
 //Shaders-------------------------------------------------------------------------------
@@ -245,29 +227,27 @@ void loadShader(GLuint s_program, string shaderFile, GLenum s_type)
 	createShader(s_program, v.c_str(), s_type);
 }
 
-void initShaders(GLuint s_program)
+void initShaders(GLuint s_program, string vShader, string fShader)
 {
 	
-	loadShader(shaderProgram, "shadertest.vert", GL_VERTEX_SHADER);
-	loadShader(shaderProgram, "shadertest.frag", GL_FRAGMENT_SHADER);
+	loadShader(s_program, vShader, GL_VERTEX_SHADER);
+	loadShader(s_program, fShader, GL_FRAGMENT_SHADER);
 
 	GLint success = 0;
 	GLchar errLog[1024] = { 0 };
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	glLinkProgram(s_program);
+	glGetProgramiv(s_program, GL_LINK_STATUS, &success);
 	if (success == 0) {
-		glGetProgramInfoLog(shaderProgram, sizeof(errLog), NULL, errLog);
+		glGetProgramInfoLog(s_program, sizeof(errLog), NULL, errLog);
 		fprintf(stderr, "Error linking shader program: '%s'\n", errLog);
 		//exit(1);
 	}
-	glValidateProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &success);
+	glValidateProgram(s_program);
+	glGetProgramiv(s_program, GL_VALIDATE_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(shaderProgram, sizeof(errLog), NULL, errLog);
+		glGetProgramInfoLog(s_program, sizeof(errLog), NULL, errLog);
 		fprintf(stderr, "Invalid shader program: '%s'\n", errLog);
 		//exit(1);
 	}
-
-	glUseProgram(shaderProgram);
 }
 //Shaders-------------------------------------------------------------------------------

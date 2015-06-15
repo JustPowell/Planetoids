@@ -11,6 +11,7 @@ class Vertex;
 class PlanetMesh : public Mesh
 {
 public:
+	PlanetMesh();
 	PlanetMesh(GLfloat radius, int sublvl);
 	~PlanetMesh();
 
@@ -31,7 +32,6 @@ private:
 
 	vertex_l calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face *face);
 	void initVertices(int sublvl);
-	void addVert(Vertex *vert);
 	void initCube();
 	void toSphere();
 

@@ -1,5 +1,10 @@
 #include "../Headers/PlanetMesh.h"
 
+PlanetMesh::PlanetMesh()
+{
+	this->radius = 0;
+}
+
 PlanetMesh::PlanetMesh(GLfloat r, int sublvl)
 {
 	this->radius = r;
@@ -20,62 +25,34 @@ void PlanetMesh::initVertices(int sublvl)
 	
 	Vertex *vert = new Vertex(vector3f(-r, r, r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(-r, r, r), vert);
 
 	vert = new Vertex(vector3f(r, r, r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(r, r, r), vert);
 
 	vert = new Vertex(vector3f(r, -r, r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(r, -r, r), vert);
 
 	vert = new Vertex(vector3f(-r, -r, r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(-r, -r, r), vert);
 	//-------------------------------------------------------------
 
 	vert = new Vertex(vector3f(-r, r, -r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(-r, r, -r), vert);
 
 	vert = new Vertex(vector3f(r, r, -r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(r, r, -r), vert);
 
 	vert = new Vertex(vector3f(r, -r, -r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(r, -r, -r), vert);
 
 	vert = new Vertex(vector3f(-r, -r, -r));
 	this->addV(vert);
-	//this->initVerts.push_back(vert);
-	//this->vertexTable.emplace(vector3f(-r, -r, -r), vert);
-	
 }
-
-void PlanetMesh::addVert(Vertex *vert)
-{
-	//this->vertexTable.emplace(vert->getLocation(), vert);
-}
-
 
 PlanetMesh::side* PlanetMesh::getSide(int idx)
 {
 	return this->cubeside[idx];
 }
-
-/*Quadtree* PlanetMesh::getQuad(int idx)
-{
-	return this->quadtrees[idx];
-}*/
 
 void PlanetMesh::initCube()
 {
@@ -98,7 +75,6 @@ void PlanetMesh::initCube()
 	this->addF(f);
 	this->addEdges(f);
 	this->cubeside[0]->faceList.push_back(f);
-	//this->quadtrees.push_back(new Quadtree(this->cubeside[0]->faceList[0]));
 	//--------------------------------------
 	
 	//Side 1--------------------------------
@@ -110,7 +86,6 @@ void PlanetMesh::initCube()
 	this->addF(f);
 	this->addEdges(f);
 	this->cubeside[1]->faceList.push_back(f);
-	//this->quadtrees.push_back(new Quadtree(this->cubeside[1]->faceList[0]));
 	//--------------------------------------
 
 	//Side 2--------------------------------
@@ -122,7 +97,6 @@ void PlanetMesh::initCube()
 	this->addF(f);
 	this->addEdges(f);
 	this->cubeside[2]->faceList.push_back(f);
-	//this->quadtrees.push_back(new Quadtree(this->cubeside[2]->faceList[0]));
 	//--------------------------------------
 
 	//Side 3--------------------------------
@@ -134,7 +108,6 @@ void PlanetMesh::initCube()
 	this->addF(f);
 	this->addEdges(f);
 	this->cubeside[3]->faceList.push_back(f);
-	//this->quadtrees.push_back(new Quadtree(this->cubeside[3]->faceList[0]));
 	//--------------------------------------
 
 	//Side 4--------------------------------
@@ -146,7 +119,6 @@ void PlanetMesh::initCube()
 	this->addF(f);
 	this->addEdges(f);
 	this->cubeside[4]->faceList.push_back(f);
-	//this->quadtrees.push_back(new Quadtree(this->cubeside[4]->faceList[0]));
 	//--------------------------------------
 
 	//Side 5--------------------------------
@@ -158,55 +130,26 @@ void PlanetMesh::initCube()
 	this->addF(f);
 	this->addEdges(f);
 	this->cubeside[5]->faceList.push_back(f);
-	//this->quadtrees.push_back(new Quadtree(this->cubeside[5]->faceList[0]));
 	//--------------------------------------
 	
 }
-/*
-void PlanetMesh::subdivide(int sublvl)
-{
-	for (int i = 0; i < sublvl; i++)
-	{
-		for (size_t s = 0, c_size = this->cubeside.size(); s < c_size; ++s)
-		{
-			face_l tempFacel;
-			int size = this->cubeside[s]->faceList.size();
 
-			for (int f = 0; f < size; f++)
-			{
-				Face *face = this->cubeside[s]->faceList[f];
-
-				vertex_l newVertl = this->calcNewVerts(face);
-				Face *f0 = new Face(face->getVertices()[0], newVertl[0], newVertl[4], newVertl[3]);
-				Face *f1 = new Face(newVertl[0], face->getVertices()[1], newVertl[1], newVertl[4]);
-				Face *f2 = new Face(newVertl[3], newVertl[4], newVertl[2], face->getVertices()[3]);
-				Face *f3 = new Face(newVertl[4], newVertl[1], face->getVertices()[2], newVertl[2]);
-
-				tempFacel.push_back(f0);
-				tempFacel.push_back(f1);
-				tempFacel.push_back(f2);
-				tempFacel.push_back(f3);
-			}
-			cubeside[s]->faceList = tempFacel;
-		}
-	}
-}
-*/
 void PlanetMesh::subdivide(int sublvl)
 {
 	unordered_map<Edge*, Vertex*> newVerts;
 	for (int i = 0; i < sublvl; i++)
 	{
-		this->m_edges.clear();
-		this->m_faces.clear();
-
 		face_l templist = this->l_faces;
-		this->l_faces.clear();
-		this->l_edges.clear();
-
 		this->num_e = 0;
 		this->num_f = 0;
 
+		this->m_edges.clear();
+		this->m_faces.clear();
+
+		//clearVector<face_l>(this->l_faces);
+		//clearVector<edge_l>(this->l_edges);
+		this->l_faces.clear();
+		this->l_edges.clear();
 		size_t size = templist.size();
 		for (size_t s = 0; s < size; s++)
 		{
@@ -224,22 +167,18 @@ void PlanetMesh::subdivide(int sublvl)
 			Face *f3 = new Face(newVertl[4], newVertl[1], face->getVertices()[2], newVertl[2]);
 
 			this->addF(f0);
-			//templist.push_back(f0);
 			this->addEdges(f0);
 
 			this->addF(f1);
-			//templist.push_back(f1);
 			this->addEdges(f1);
 
 			this->addF(f2);
-			//templist.push_back(f2);
 			this->addEdges(f2);
 
 			this->addF(f3);
-			//templist.push_back(f3);
 			this->addEdges(f3);
 		}
-		//this->l_faces = templist;
+		
 	}
 	this->updateIndex();
 }
@@ -275,10 +214,8 @@ vertex_l PlanetMesh::calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face 
 
 void PlanetMesh::toSphere()
 {
-	//vertexMap newTable;
 	int count = 0;
 	for (size_t i = 0; i < this->num_v; i++)
-	//for (auto it = this->vertexTable.begin(); it != this->vertexTable.end(); ++it)
 	{
 		count++;
 		vector3f newloc;
@@ -288,9 +225,11 @@ void PlanetMesh::toSphere()
 		theta = acos((loc.z / sqrt( pow(loc.x, 2) + pow(loc.y, 2) + pow(loc.z, 2))));
 		phi = atan2(loc.y, loc.x);
 
-		newloc.x = this->radius * sin(theta) * cos(phi);
-		newloc.y = this->radius * sin(theta) * sin(phi);
-		newloc.z = this->radius * cos(theta);
+		int randn =  (rand() % 2);
+
+		newloc.x = (this->radius + randn) * sin(theta) * cos(phi);
+		newloc.y = (this->radius + randn) * sin(theta) * sin(phi);
+		newloc.z = (this->radius + randn) * cos(theta);
 
 		this->l_vertices[i]->setLocation(newloc);
 	}

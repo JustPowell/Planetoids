@@ -27,13 +27,10 @@
 
 using namespace std;
 
-//typedef tuple<GLfloat, GLfloat, GLfloat> vector3f;
-//typedef tuple<GLfloat, GLfloat, GLfloat> color3f;
-//typedef tuple<GLfloat, GLfloat, GLfloat> normal3f;
 typedef tuple<int, int, int> tup3i;
 
 typedef glm::vec3 vector3f;
 typedef glm::vec3 color3f;
 typedef glm::vec3 normal3f;
 
-static glm::mat4 proj = glm::perspective(90.0f, (float)1024 / (float)768, 0.1f, 1000.f);
+static glm::mat4 proj = glm::perspective(30.0f, (float)1024 / (float)768, 0.1f, 1000.f);

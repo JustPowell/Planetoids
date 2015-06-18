@@ -1,7 +1,8 @@
 #include "./Headers/Planetoids.h"
 #include "./Mesh/Headers/PlanetMesh.h"
+#include "./Objects/Headers/PObject.h"
 
-#define SUB_LVL 5
+#define SUB_LVL 0
 #define planet 0
 
 void init(GLFWwindow* window);
@@ -14,7 +15,9 @@ void loadShader(GLuint s_program, string shaderName, GLenum s_type);
 
 PlanetMesh* rect;
 PlanetMesh::side* side;
-Camera camera;
+PObject* planetObj;
+PObject* planetObj2;
+Camera* camera;
 
 bool wireframe = false;
 GLfloat r = 10.f;
@@ -36,6 +39,8 @@ GLuint cBuffer;
 GLuint nBuffer;
 GLuint iBuffer;
 
+int canmove = 0;
+
 static void error_callback(int error, const char* description)
 {
 	fputs(description, stderr);
@@ -51,6 +56,33 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
 	{
 		wireframe = true;
+	}
+	camera->move(key, action);
+}
+
+static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (canmove)
+		camera->move(window, xpos, ypos);
+}
+
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		//double xpos, ypos;
+		//int width, height;
+
+		//glfwGetCursorPos(window, &xpos, &ypos);
+		//glfwGetFramebufferSize(window, &width, &height);
+		//glfwSetCursorPos(window, (double)width/2, (double)height/2);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		canmove = 1;
+	}
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		canmove = 0;
 	}
 }
 
@@ -69,17 +101,24 @@ int main(void)
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(0);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glewInit();
 	
-	shaderProgram = glCreateProgram();
-	shaderProgram2 = glCreateProgram();
+	//shaderProgram = glCreateProgram();
+	//shaderProgram2 = glCreateProgram();
 
 	init(window);
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		draw(window, shaderProgram2, 1);
-		draw(window, shaderProgram, 0);
+		//draw(window, shaderProgram2, 1);
+		//draw(window, shaderProgram, 0);
+		camera->update();
+		planetObj->update();
+		planetObj2->update();
+		planetObj->draw(camera);
+		planetObj2->draw(camera);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -100,40 +139,44 @@ void initBuffers()
 void bindBuffers()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &rect->getLocations()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(planetObj->getMesh()->getVerts().size() * 3), &planetObj->getMesh()->getLocations()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, cBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &rect->getColors()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(planetObj->getMesh()->getVerts().size() * 3), &planetObj->getMesh()->getColors()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, nBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(rect->getVerts().size()*3), &rect->getNormals()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(planetObj->getMesh()->getVerts().size() * 3), &planetObj->getMesh()->getNormals()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, iBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*rect->getNumInd(), &rect->getIndices()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*planetObj->getMesh()->getNumInd(), &planetObj->getMesh()->getIndices()[0], GL_STATIC_DRAW);
 }
 
 void init(GLFWwindow* window)
 {
 	//glm::vec3 pos(-120.f, 0.f, 0.f);
-	glm::vec3 pos(0.f, 0.f, 120.f);
+	glm::vec3 pos(0.f, 0.f, -200.f);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
-	camera = Camera(pos, tar, up);
-	rect = new PlanetMesh(100.0f, SUB_LVL);
+	camera = new Camera(pos, tar, up);
+	//rect = new PlanetMesh(100.0f, SUB_LVL);
+	planetObj = new PObject("name", 100.0f);
+	planetObj2 = new PObject("nam2", 100.f);
+	planetObj->setLoc(glm::vec3(-150.f, 0.f, 0.f));
+	planetObj2->setLoc(glm::vec3(150.f, 0.f, 0.f));
 	
-	initShaders(shaderProgram, "shadertest.vert", "shadertest.frag");
-	initShaders(shaderProgram2, "shadertest.vert", "shadertest2.frag");
+	//initShaders(shaderProgram, "shadertest.vert", "shadertest.frag");
+	//initShaders(shaderProgram2, "shadertest.vert", "shadertest2.frag");
 	
-	u_PMatrix = glGetUniformLocation(shaderProgram, "projection");
-	u_VMatrix = glGetUniformLocation(shaderProgram, "view");
-	u_MMatrix = glGetUniformLocation(shaderProgram, "model");
+	//u_PMatrix = glGetUniformLocation(shaderProgram, "projection");
+	//u_VMatrix = glGetUniformLocation(shaderProgram, "view");
+	//u_MMatrix = glGetUniformLocation(shaderProgram, "model");
 
-	a_position = glGetAttribLocation(shaderProgram, "position");
-	a_normal = glGetAttribLocation(shaderProgram, "normal");
-	a_color = glGetAttribLocation(shaderProgram, "color");
+	//a_position = glGetAttribLocation(shaderProgram, "position");
+	//a_normal = glGetAttribLocation(shaderProgram, "normal");
+	//a_color = glGetAttribLocation(shaderProgram, "color");
 	  
-	initBuffers();
-	bindBuffers();
+	//initBuffers();
+	//bindBuffers();
 
 	float ratio;
 	int width, height;
@@ -171,7 +214,7 @@ void draw(GLFWwindow* window, GLuint s_program, int wireframe)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	
 	if (wireframe)
 	{
@@ -188,14 +231,12 @@ void draw(GLFWwindow* window, GLuint s_program, int wireframe)
 	//glm::mat4 model(1.0f);
 	
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
-	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
-	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(planetObj->getModelMatrix()));
 	
 	bindings();
 
-	glDrawElements(GL_QUADS, rect->getNumInd(), GL_UNSIGNED_INT, 0);
-
-	
+	glDrawElements(GL_QUADS, planetObj->getMesh()->getNumInd(), GL_UNSIGNED_INT, 0);
 }
 
 //Shaders-------------------------------------------------------------------------------

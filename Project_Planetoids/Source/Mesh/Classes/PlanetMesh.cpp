@@ -2,21 +2,37 @@
 
 PlanetMesh::PlanetMesh()
 {
-	this->radius = 0;
+	this->setRadius(0);
+	this->setSubdivisionLvl(0);
 }
 
 PlanetMesh::PlanetMesh(GLfloat r, int sublvl)
 {
-	this->radius = r;
-	this->initVertices(sublvl);
-	this->initCube();
-	this->subdivide(sublvl);
-	this->toSphere();
-} 
-
+	this->setRadius(r);
+	this->setSubdivisionLvl(sublvl);
+	this->buildPlanet();
+}
 
 PlanetMesh::~PlanetMesh()
 {
+}
+
+void PlanetMesh::setRadius(GLfloat radius)
+{
+	this->radius = radius;
+}
+
+void PlanetMesh::setSubdivisionLvl(int sublvl)
+{
+	this->sublvl = sublvl;
+}
+
+void PlanetMesh::buildPlanet()
+{
+	this->initVertices(this->sublvl);
+	this->initCube();
+	this->subdivide(this->sublvl);
+	this->toSphere();
 }
 
 void PlanetMesh::initVertices(int sublvl)
@@ -25,28 +41,29 @@ void PlanetMesh::initVertices(int sublvl)
 	
 	Vertex *vert = new Vertex(vector3f(-r, r, r));
 	this->addV(vert);
-
+	
 	vert = new Vertex(vector3f(r, r, r));
 	this->addV(vert);
-
+	
 	vert = new Vertex(vector3f(r, -r, r));
 	this->addV(vert);
-
+	
 	vert = new Vertex(vector3f(-r, -r, r));
 	this->addV(vert);
 	//-------------------------------------------------------------
 
 	vert = new Vertex(vector3f(-r, r, -r));
 	this->addV(vert);
-
+	
 	vert = new Vertex(vector3f(r, r, -r));
 	this->addV(vert);
-
+	
 	vert = new Vertex(vector3f(r, -r, -r));
 	this->addV(vert);
-
+	
 	vert = new Vertex(vector3f(-r, -r, -r));
 	this->addV(vert);
+	
 }
 
 PlanetMesh::side* PlanetMesh::getSide(int idx)
@@ -137,19 +154,23 @@ void PlanetMesh::initCube()
 void PlanetMesh::subdivide(int sublvl)
 {
 	unordered_map<Edge*, Vertex*> newVerts;
+	face_l oldFaces;
+	edge_l oldEdges;
 	for (int i = 0; i < sublvl; i++)
 	{
-		face_l templist = this->l_faces;
-		this->num_e = 0;
-		this->num_f = 0;
-
+		oldFaces.insert(oldFaces.end(), this->l_faces.begin(), this->l_faces.end());
+		oldEdges.insert(oldEdges.end(), this->l_edges.begin(), this->l_edges.end());
 		this->m_edges.clear();
 		this->m_faces.clear();
 
-		//clearVector<face_l>(this->l_faces);
-		//clearVector<edge_l>(this->l_edges);
+		face_l templist = this->l_faces;
+
 		this->l_faces.clear();
 		this->l_edges.clear();
+
+		this->num_e = 0;
+		this->num_f = 0;
+
 		size_t size = templist.size();
 		for (size_t s = 0; s < size; s++)
 		{
@@ -178,8 +199,11 @@ void PlanetMesh::subdivide(int sublvl)
 			this->addF(f3);
 			this->addEdges(f3);
 		}
-		
 	}
+	clearVector<edge_l>(oldEdges);
+	clearVector<face_l>(oldFaces);
+	oldEdges.clear();
+	oldFaces.clear();
 	this->updateIndex();
 }
 

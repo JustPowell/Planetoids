@@ -113,6 +113,8 @@ Vertex* Edge::getVert(int v)
 		return this->v0;
 	case 1:
 		return this->v1;
+	default:
+		return this->v0;
 	}
 }
 

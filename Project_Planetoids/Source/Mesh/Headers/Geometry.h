@@ -83,8 +83,6 @@ private:
 	color3f  color;
 
 	normal3f f_normal;
-
-	
 };
 
 inline vector3f getCentroid(const Vertex* v0, const Vertex* v1) //TEMPORARY FUNCTION

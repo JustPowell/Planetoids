@@ -5,30 +5,42 @@
 class PObject
 {
 public:
-	PObject();
+	PObject(string name, GLfloat radius);
 	~PObject();
 
+	void setName(string name);
+	void setRadius(GLfloat radius);
 	void update();
-	void draw();
-
+	void draw(Camera* camera);
 	void setLoc(glm::vec3 loc);
-	glm::vec3 getLoc();
-
 	void setModelMatrix(const glm::mat4& modelMatrix);
-	glm::mat4 getModelMatrix();
 
-	GLuint getShader();
-	PlanetMesh getMesh();
+	string		getName();
+	GLfloat		getRadius();
+	glm::mat4	getModelMatrix();
+	glm::vec3	getLoc();
+	GLuint		getShader();
+	PlanetMesh*	getMesh();
 
 private:
+	string name;
 	GLfloat radius;
 
 	glm::vec3 loc;
 	glm::mat4 modelMatrix;
 
-	GLuint shaderProgram;
-	PlanetMesh mesh;
+	GLuint faceProgram, edgeProgram;
+	PlanetMesh* mesh = 0;
 
-	void loadShader(GLuint shaderProgram);
+	GLuint vBuffer, cBuffer, nBuffer, iBuffer;
+	GLuint u_PMatrix = 0, u_VMatrix = 0, u_MMatrix = 0;
+	GLuint a_position = 0, a_normal = 0, a_color = 0;
+
+	void bufferObjects();
+	void bindBuffers(int wireframe);
+	
+	void loadShaderVariables();
+	void loadShader(GLuint& shaderProgram, string shaderName);
+	void createShader(GLuint& shaderProgram, const char* shadertext, GLuint& s_obj);
 };
 

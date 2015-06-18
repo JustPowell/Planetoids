@@ -15,6 +15,10 @@ public:
 	PlanetMesh(GLfloat radius, int sublvl);
 	~PlanetMesh();
 
+	void setRadius(GLfloat radius);
+	void setSubdivisionLvl(int sublvl);
+	void buildPlanet();
+
 	struct side {
 		face_l faceList;
 		side *top;
@@ -27,6 +31,7 @@ public:
 	void subdivide(int lvl);
 
 private:
+	int sublvl;
 	vector<side*> cubeside;
 	GLfloat radius;
 

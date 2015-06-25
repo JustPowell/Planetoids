@@ -20,7 +20,7 @@ public:
 	glm::mat4	getModelMatrix();
 	glm::vec3	getLoc();
 	GLuint		getShader();
-	PlanetMesh*	getMesh();
+	PlanetMesh	getMesh();
 
 private:
 	string name;
@@ -29,16 +29,19 @@ private:
 	glm::vec3 loc;
 	glm::mat4 modelMatrix;
 
-	GLuint faceProgram, edgeProgram;
-	PlanetMesh* mesh = 0;
+	GLuint faceProgram, edgeProgram, atmoProgram, atmoEProgram;
+	PlanetMesh mesh, atmo;
 
 	GLuint vBuffer, cBuffer, nBuffer, iBuffer;
+	GLuint vaBuffer, caBuffer, naBuffer, iaBuffer;
 	GLuint u_PMatrix = 0, u_VMatrix = 0, u_MMatrix = 0;
 	GLuint a_position = 0, a_normal = 0, a_color = 0;
 
-	void bufferObjects();
-	void bindBuffers(int wireframe);
-	
+	void bufferTerrainObjects();
+	void bufferAtmoObjects();
+	void bindTerrainBuffers(int wireframe);
+	void bindAtmoBuffers();
+
 	void loadShaderVariables();
 	void loadShader(GLuint& shaderProgram, string shaderName);
 	void createShader(GLuint& shaderProgram, const char* shadertext, GLuint& s_obj);

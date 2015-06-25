@@ -1,5 +1,8 @@
 #include "Camera.h"
 
+/*
+	Camera controls thanks to: http://www.opengl-tutorial.org/beginners-tutorials/tutorial-6-keyboard-and-mouse/
+*/
 
 Camera::Camera()
 {
@@ -8,15 +11,10 @@ Camera::Camera()
 Camera::Camera(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
 {
 	this->pos = pos;
-	//this->target = target;
-	//this->up = up;
 	this->xpos = 1024.f/2.f;
 	this->ypos = 768.f/2.f;
 	this->viewMatrix = glm::lookAt(pos, target, up);
-	//this->hangle += mousespeed * float(1024 / 2 - xpos);
-	//this->vangle += mousespeed * float(768 / 2 - ypos);
 	this->target = glm::vec3(cosf(vangle)*sinf(hangle), sinf(vangle), cos(vangle) * cos(hangle));
-	
 }
 
 
@@ -94,6 +92,7 @@ void Camera::move(int key, int action)
 	}
 }
 
+//TODO: need to fix this up.
 void Camera::move(GLFWwindow* window, double xpos, double ypos)
 {
 	if (xpos > 1024.f)
@@ -105,10 +104,10 @@ void Camera::move(GLFWwindow* window, double xpos, double ypos)
 	if (ypos < 0.f)
 		ypos = 0.f;
 
-	this->hangle += mousespeed * float(1024.f / 2.f - xpos);
-	this->vangle += mousespeed * float(768.f / 2.f - ypos);
+	this->hangle += mousespeed * float(this->xpos - xpos);
+	this->vangle += mousespeed * float(this->ypos - ypos);
 	if (vangle > 90.f)
 		vangle = 90.f;
-	else if (vangle < -90.f)
+	else if (vangle > -90.f)
 		vangle = -90.f;
 }

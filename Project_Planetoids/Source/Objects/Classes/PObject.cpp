@@ -5,15 +5,18 @@ PObject::PObject(string name, GLfloat radius)
 {
 	this->setName(name);
 	this->setRadius(radius);
-	this->mesh = new PlanetMesh(radius, 5);
+	this->mesh = PlanetMesh(radius, 5);
+	this->atmo = PlanetMesh(radius * 1.25, 5);
 	this->modelMatrix = glm::mat4(1.0f);
 	this->setLoc(glm::vec3(0.f, 0.f, 0.f));
-	//this->loc = glm::vec3(0.f, 0.f, -200.f);
 
-	this->loadShader(this->faceProgram, "shadertest");
-	this->loadShader(this->edgeProgram, "shadertest2");
+	this->loadShader(this->faceProgram, name);
+	this->loadShader(this->edgeProgram, "edgeShader");
+	this->loadShader(this->atmoProgram, "planet1");
+	this->loadShader(this->atmoEProgram, "edgeShader");
 	this->loadShaderVariables();
-	this->bufferObjects();
+	this->bufferTerrainObjects();
+	this->bufferAtmoObjects();
 }
 
 
@@ -21,6 +24,7 @@ PObject::~PObject()
 {
 	glDeleteProgram(this->faceProgram);
 	glDeleteProgram(this->edgeProgram);
+	glDeleteProgram(this->atmoProgram);
 }
 
 void PObject::setName(string name)
@@ -35,24 +39,23 @@ void PObject::setRadius(GLfloat radius)
 
 void PObject::update()
 {
-	//glm::translate(this->modelMatrix, this->loc);
-	this->modelMatrix = glm::translate(glm::mat4(1.f), this->loc) * glm::rotate(glm::mat4(1.f), (float)glfwGetTime()*.5f, glm::vec3(0.f, 1.f, 0.f));
+	this->modelMatrix = glm::translate(glm::mat4(1.f), this->loc) * glm::rotate(glm::mat4(1.f), (float)glfwGetTime()*.05f, glm::vec3(0.f, 1.f, 0.f));
 }
 
 void PObject::draw(Camera* camera)
 {
-	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
-	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
-	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
+	glFrontFace(GL_CCW);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 	glUseProgram(this->edgeProgram);
-	glDepthRange(0.0, 0.99999);
+	glDepthRange(0.0, 0.99995);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	this->bindBuffers(0);
-	glDrawElements(GL_QUADS, this->mesh->getNumInd(), GL_UNSIGNED_INT, 0);
+	this->bindTerrainBuffers(1);
+	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
@@ -63,8 +66,45 @@ void PObject::draw(Camera* camera)
 	glUseProgram(this->faceProgram);
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	this->bindBuffers(0);
-	glDrawElements(GL_QUADS, this->mesh->getNumInd(), GL_UNSIGNED_INT, 0);
+	this->bindTerrainBuffers(0);
+	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+
+	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glFrontFace(GL_CW);
+	glEnable(GL_CULL_FACE);
+	//glDisable(GL_BLEND);
+	glUseProgram(this->atmoEProgram);
+	glDepthRange(0.0, 0.99995);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	this->bindAtmoBuffers();
+	glDrawElements(GL_QUADS, this->atmo.getNumInd(), GL_UNSIGNED_INT, 0);
+	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glUseProgram(this->atmoProgram);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
+	glDepthFunc(GL_LEQUAL);
+	this->bindAtmoBuffers();
+	glDrawElements(GL_QUADS, this->atmo.getNumInd(), GL_UNSIGNED_INT, 0);
+
+	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
+	glDepthMask(GL_TRUE);
 }
 
 void PObject::setLoc(glm::vec3 loc)
@@ -97,7 +137,7 @@ glm::vec3 PObject::getLoc()
 	return this->loc;
 }
 
-void PObject::bufferObjects()
+void PObject::bufferTerrainObjects()
 {
 	glGenBuffers(1, &this->vBuffer);
 	glGenBuffers(1, &this->cBuffer);
@@ -105,19 +145,39 @@ void PObject::bufferObjects()
 	glGenBuffers(1, &this->iBuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->vBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->mesh->getVerts().size() * 3), &this->mesh->getLocations()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->mesh.getVerts().size() * 3), &this->mesh.getLocations()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->cBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->mesh->getVerts().size() * 3), &this->mesh->getColors()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->mesh.getVerts().size() * 3), &this->mesh.getColors()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->nBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->mesh->getVerts().size() * 3), &this->mesh->getNormals()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->mesh.getVerts().size() * 3), &this->mesh.getNormals()[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->iBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*this->mesh->getNumInd(), &this->mesh->getIndices()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*this->mesh.getNumInd(), &this->mesh.getIndices()[0], GL_STATIC_DRAW);
 }
 
-void PObject::bindBuffers(int wireframe)
+void PObject::bufferAtmoObjects()
+{
+	glGenBuffers(1, &this->vaBuffer);
+	glGenBuffers(1, &this->caBuffer);
+	glGenBuffers(1, &this->naBuffer);
+	glGenBuffers(1, &this->iaBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->vaBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->atmo.getVerts().size() * 3), &this->atmo.getLocations()[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->caBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->atmo.getVerts().size() * 3), &this->atmo.getColors()[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->naBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->atmo.getVerts().size() * 3), &this->atmo.getNormals()[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->iaBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*this->atmo.getNumInd(), &this->atmo.getIndices()[0], GL_STATIC_DRAW);
+}
+
+void PObject::bindTerrainBuffers(int wireframe)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, this->vBuffer);
 	glVertexAttribPointer(this->a_position, 3, GL_FLOAT, false, 0, 0);
@@ -135,6 +195,23 @@ void PObject::bindBuffers(int wireframe)
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->iBuffer);
+}
+
+void PObject::bindAtmoBuffers()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, this->vaBuffer);
+	glVertexAttribPointer(this->a_position, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(this->a_position);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->caBuffer);
+	glVertexAttribPointer(this->a_color, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(this->a_color);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->naBuffer);
+	glVertexAttribPointer(this->a_normal, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(this->a_normal);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->iaBuffer);
 }
 
 void PObject::loadShaderVariables()
@@ -210,7 +287,7 @@ void PObject::createShader(GLuint& shaderProgram, const char* shadertext, GLuint
 	glAttachShader(shaderProgram, s_obj);
 }
 
-PlanetMesh* PObject::getMesh()
+PlanetMesh PObject::getMesh()
 {
 	return this->mesh;
 }

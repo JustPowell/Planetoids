@@ -5,14 +5,14 @@ PObject::PObject(string name, GLfloat radius)
 {
 	this->setName(name);
 	this->setRadius(radius);
-	this->mesh = PlanetMesh(radius, 5);
-	this->atmo = PlanetMesh(radius * 1.25, 5);
+	this->mesh = PlanetMesh(radius, 5, 1);
+	this->atmo = PlanetMesh(radius + 1600, 5);
 	this->modelMatrix = glm::mat4(1.0f);
 	this->setLoc(glm::vec3(0.f, 0.f, 0.f));
 
 	this->loadShader(this->faceProgram, name);
 	this->loadShader(this->edgeProgram, "edgeShader");
-	this->loadShader(this->atmoProgram, "planet1");
+	this->loadShader(this->atmoProgram, "atmoShader");
 	this->loadShader(this->atmoEProgram, "edgeShader");
 	this->loadShaderVariables();
 	this->bufferTerrainObjects();
@@ -25,6 +25,7 @@ PObject::~PObject()
 	glDeleteProgram(this->faceProgram);
 	glDeleteProgram(this->edgeProgram);
 	glDeleteProgram(this->atmoProgram);
+	glDeleteProgram(this->atmoEProgram);
 }
 
 void PObject::setName(string name)
@@ -37,73 +38,131 @@ void PObject::setRadius(GLfloat radius)
 	this->radius = radius;
 }
 
+void PObject::changeLambda(int key, int action, int mods)
+{
+	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+	{
+		glDeleteShader(this->atmoProgram);
+		this->loadShader(this->atmoProgram, "atmoShader");
+		this->loadShaderVariables();
+	}
+	if (key == GLFW_KEY_EQUAL && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	{
+		this->lambda += 10.f;
+	}
+	else if (key == GLFW_KEY_MINUS && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	{
+		this->lambda -= 10.f;
+	}
+
+	else if (key == GLFW_KEY_EQUAL && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	{
+		this->lambda += 1.f;
+	}
+	else if (key == GLFW_KEY_MINUS && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	{
+		this->lambda -= 1.f;
+	}
+
+	if (this->lambda > 780.f)
+	{
+		this->lambda = 780.f;
+	}
+	else if (this->lambda < 380.f)
+	{
+		this->lambda = 380.f;
+	}
+}
+
 void PObject::update()
 {
-	this->modelMatrix = glm::translate(glm::mat4(1.f), this->loc) * glm::rotate(glm::mat4(1.f), (float)glfwGetTime()*.05f, glm::vec3(0.f, 1.f, 0.f));
+	/*if (this->lambda >= 780.0f || this->lambda <= 380.0f)
+	{
+		this->mult *= -1;
+	}
+	this->lambda += (.2500000f * mult);
+	if (this->lambda > 780.f)
+	{
+		this->lambda = 780.f;
+	}
+	else if (this->lambda < 380.f)
+	{
+		this->lambda = 380.f;
+	}*/
+	printf("\rLambda: %f", this->lambda);
+	this->modelMatrix = glm::translate(glm::mat4(1.f), this->loc);// *glm::rotate(glm::mat4(1.f), (float)glfwGetTime()*.05f, glm::vec3(0.f, 1.f, 0.f));
 }
 
 void PObject::draw(Camera* camera)
 {
-	
+	//--------------------------------------------------------------------------------------
+	/*glUseProgram(this->edgeProgram);
+	this->bindTerrainBuffers(1);
+	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	glUseProgram(this->edgeProgram);
 	glDepthRange(0.0, 0.99995);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	this->bindTerrainBuffers(1);
-	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/
+	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 
+	//--------------------------------------------------------------------------------------
+	glUseProgram(this->faceProgram);
+	this->bindTerrainBuffers(0);
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glUseProgram(this->faceProgram);
-	glDepthRange(0.0, 1.0);
+	glFrontFace(GL_CCW);
+	glEnable(GL_DEPTH_TEST);
+	glDepthRange(0.0, .99994);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	this->bindTerrainBuffers(0);
 	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 
+	//--------------------------------------------------------------------------------------
+	glUseProgram(this->atmoEProgram);
+	this->bindAtmoBuffers();
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
-	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
-	
+	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glFrontFace(GL_CW);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	//glDisable(GL_BLEND);
-	glUseProgram(this->atmoEProgram);
 	glDepthRange(0.0, 0.99995);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	this->bindAtmoBuffers();
 	glDrawElements(GL_QUADS, this->atmo.getNumInd(), GL_UNSIGNED_INT, 0);
+	
+	//--------------------------------------------------------------------------------------
+	glUseProgram(this->atmoProgram);
+	this->bindAtmoBuffers();
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
 	
+	glUniform3fv(u_CameraPos, 1, glm::value_ptr(camera->getPos()));
+	printf(" Camera Pos: %f %f %f", camera->getPos().x, camera->getPos().y, camera->getPos().z);
+	glUniform1f(f_lambda, this->lambda);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glUseProgram(this->atmoProgram);
+	//glDepthMask(GL_FALSE);
+	glDepthRange(0.0, .99996);
+	//glEnable(GL_BLEND);
+	//glDepthFunc(GL_LEQUAL);
+	//glDisable(GL_CULL_FACE);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	
-	glDepthFunc(GL_LEQUAL);
-	this->bindAtmoBuffers();
 	glDrawElements(GL_QUADS, this->atmo.getNumInd(), GL_UNSIGNED_INT, 0);
-
-	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
-	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
-	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
+	
+	//--------------------------------------------------------------------------------------
 	glDepthMask(GL_TRUE);
 }
 
@@ -219,6 +278,8 @@ void PObject::loadShaderVariables()
 	this->u_PMatrix = glGetUniformLocation(this->faceProgram, "projection");
 	this->u_VMatrix = glGetUniformLocation(this->faceProgram, "view");
 	this->u_MMatrix = glGetUniformLocation(this->faceProgram, "model");
+	this->u_CameraPos = glGetUniformLocation(this->atmoProgram, "cameraPos");
+	this->f_lambda = glGetUniformLocation(this->atmoProgram, "wavelength");
 
 	this->a_position = glGetAttribLocation(this->faceProgram, "position");
 	this->a_normal = glGetAttribLocation(this->faceProgram, "normal");

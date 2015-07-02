@@ -28,7 +28,7 @@ private:
 	float hangle = 3.14f;
 	float vangle = 0.f;
 	float initFov = 45.f;
-	float speed = 5.f;
+	float speed = 50.f;
 	float mousespeed = .00005f;
 };
 

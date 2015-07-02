@@ -12,7 +12,7 @@ class PlanetMesh : public Mesh
 {
 public:
 	PlanetMesh();
-	PlanetMesh(GLfloat radius, int sublvl);
+	PlanetMesh(GLfloat radius, int sublvl, int random = 0);
 	~PlanetMesh();
 
 	void setRadius(GLfloat radius);
@@ -32,6 +32,7 @@ public:
 
 private:
 	int sublvl;
+	int random;
 	vector<side*> cubeside;
 	GLfloat radius;
 

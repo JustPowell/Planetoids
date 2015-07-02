@@ -2,6 +2,7 @@
 #include "./Mesh/Headers/PlanetMesh.h"
 #include "./Objects/Headers/PObject.h"
 
+
 #define SUB_LVL 0
 #define planet 0
 
@@ -39,12 +40,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		wireframe = true;
 	}
 	camera->move(key, action);
+	planetObj->changeLambda(key, action, mods);
 }
 
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (canmove)
-		camera->move(window, xpos, ypos);
+	//if (canmove)
+		//camera->move(window, xpos, ypos);
 }
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -85,7 +87,8 @@ int main(void)
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glewInit();
-
+	//int* blah = new int(3);
+	//char* b = (char*)malloc(20);
 	init(window);
 	while (!glfwWindowShouldClose(window))
 	{
@@ -99,20 +102,24 @@ int main(void)
 	
 	glfwDestroyWindow(window);
 	glfwTerminate();
+	delete planetObj;
+	_CrtDumpMemoryLeaks();
 	exit(EXIT_SUCCESS);
-	//delete planetObj;
+	
 	//delete planetObj2;
+	//return 0;
 }
 
 void init(GLFWwindow* window)
 {
 	//glm::vec3 pos(-120.f, 0.f, 0.f);
-	glm::vec3 pos(0.f, 0.f, -120.f);
+	int r = 6400.f;
+	glm::vec3 pos(0.f, -r - 100, 0.f);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
 
-	planetObj = new PObject("shaderTest", 100.0f);
+	planetObj = new PObject("shaderTest", r);
 	//planetObj2 = new PObject("shaderTest", 100.f);
 	planetObj->setLoc(glm::vec3(0.f, 0.f, 0.f));
 	//planetObj2->setLoc(glm::vec3(150.f, 0.f, 0.f));

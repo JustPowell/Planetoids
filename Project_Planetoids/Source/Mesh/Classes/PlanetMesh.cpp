@@ -6,8 +6,9 @@ PlanetMesh::PlanetMesh()
 	this->setSubdivisionLvl(0);
 }
 
-PlanetMesh::PlanetMesh(GLfloat r, int sublvl)
+PlanetMesh::PlanetMesh(GLfloat r, int sublvl, int random)
 {
+	this->random = random;
 	this->setRadius(r);
 	this->setSubdivisionLvl(sublvl);
 	this->buildPlanet();
@@ -156,6 +157,7 @@ void PlanetMesh::subdivide(int sublvl)
 	unordered_map<Edge*, Vertex*> newVerts;
 	face_l oldFaces;
 	edge_l oldEdges;
+
 	for (int i = 0; i < sublvl; i++)
 	{
 		oldFaces.insert(oldFaces.end(), this->l_faces.begin(), this->l_faces.end());
@@ -171,7 +173,9 @@ void PlanetMesh::subdivide(int sublvl)
 		this->num_e = 0;
 		this->num_f = 0;
 
-		size_t size = templist.size();
+		size_t size;
+		size = templist.size();
+		
 		for (size_t s = 0; s < size; s++)
 		{
 			Face* face = templist[s];
@@ -239,9 +243,11 @@ vertex_l PlanetMesh::calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face 
 void PlanetMesh::toSphere()
 {
 	int count = 0;
+	int count2 = 10;
 	for (size_t i = 0; i < this->num_v; i++)
 	{
 		count++;
+		count2++;
 		vector3f newloc;
 		vector3f loc = this->l_vertices[i]->getLocation();
 
@@ -249,7 +255,14 @@ void PlanetMesh::toSphere()
 		theta = acos((loc.z / sqrt( pow(loc.x, 2) + pow(loc.y, 2) + pow(loc.z, 2))));
 		phi = atan2(loc.y, loc.x);
 
-		int randn =  (rand() % 2);
+		int randn;
+		if (this->random && (count2 % 10 == 0))
+		{
+			randn = 75;//(rand() % 50);
+			count2 = 0;
+		}
+		else
+			randn = 0;
 
 		newloc.x = (this->radius + randn) * sin(theta) * cos(phi);
 		newloc.y = (this->radius + randn) * sin(theta) * sin(phi);

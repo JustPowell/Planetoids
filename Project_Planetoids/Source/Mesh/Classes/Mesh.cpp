@@ -137,10 +137,8 @@ void Mesh::storeColor(Vertex* v)
 void Mesh::storeIndex(Face* f)
 {
 	vertex_l verts = f->getVertices();
-	//cout << f->getVertices().size();
 	for (size_t i = 0; i < verts.size(); i++)
 	{
-		//cout << m_vertices[verts[i]] << endl;
 		this->num_i++;
 		this->l_indices.push_back(m_vertices[verts[i]]);
 	}

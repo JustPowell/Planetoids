@@ -75,7 +75,7 @@ int main(void)
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
-	GLFWwindow* window = glfwCreateWindow(1024, 768, "Planetoids", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1440, 900, "Planetoids", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -114,14 +114,14 @@ void init(GLFWwindow* window)
 {
 	//glm::vec3 pos(-120.f, 0.f, 0.f);
 	int r = 6400.f;
-	glm::vec3 pos(0.f, -r - 100, 0.f);
+	glm::vec3 pos(0.f, -r - 1, 0.f);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
 
 	planetObj = new PObject("shaderTest", r);
 	//planetObj2 = new PObject("shaderTest", 100.f);
-	planetObj->setLoc(glm::vec3(0.f, 0.f, 0.f));
+	planetObj->setLoc(glm::vec3( 0.f, 0.f, 0.f));
 	//planetObj2->setLoc(glm::vec3(150.f, 0.f, 0.f));
 
 	float ratio;

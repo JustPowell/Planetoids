@@ -6,13 +6,13 @@ PObject::PObject(string name, GLfloat radius)
 	this->setName(name);
 	this->setRadius(radius);
 	this->mesh = PlanetMesh(radius, 5, 1);
-	this->atmo = PlanetMesh(radius + 1600, 5);
+	this->atmo = PlanetMesh(radius + 400/*(radius * .025)*/, 5);
 	this->modelMatrix = glm::mat4(1.0f);
 	this->setLoc(glm::vec3(0.f, 0.f, 0.f));
 
 	this->loadShader(this->faceProgram, name);
 	this->loadShader(this->edgeProgram, "edgeShader");
-	this->loadShader(this->atmoProgram, "atmoShader");
+	this->loadShader(this->atmoProgram, "atmoShader2");
 	this->loadShader(this->atmoEProgram, "edgeShader");
 	this->loadShaderVariables();
 	this->bufferTerrainObjects();
@@ -43,7 +43,9 @@ void PObject::changeLambda(int key, int action, int mods)
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
 		glDeleteShader(this->atmoProgram);
-		this->loadShader(this->atmoProgram, "atmoShader");
+		glDeleteProgram(this->faceProgram);
+		this->loadShader(this->faceProgram, "shadertest");
+		this->loadShader(this->atmoProgram, "atmoShader2");
 		this->loadShaderVariables();
 	}
 	if (key == GLFW_KEY_EQUAL && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
@@ -96,7 +98,7 @@ void PObject::update()
 void PObject::draw(Camera* camera)
 {
 	//--------------------------------------------------------------------------------------
-	/*glUseProgram(this->edgeProgram);
+	glUseProgram(this->edgeProgram);
 	this->bindTerrainBuffers(1);
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
@@ -107,10 +109,9 @@ void PObject::draw(Camera* camera)
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	glDepthRange(0.0, 0.99995);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/
-	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
-
+	glDepthRange(0.0, 0.99993);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 	//--------------------------------------------------------------------------------------
 	glUseProgram(this->faceProgram);
 	this->bindTerrainBuffers(0);
@@ -130,12 +131,12 @@ void PObject::draw(Camera* camera)
 	this->bindAtmoBuffers();
 	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
-	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
+	glUniformMatrix4fv(u_MMatrix, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.f), this->loc)));
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glFrontFace(GL_CW);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 	glDepthRange(0.0, 0.99995);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawElements(GL_QUADS, this->atmo.getNumInd(), GL_UNSIGNED_INT, 0);
@@ -153,6 +154,7 @@ void PObject::draw(Camera* camera)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 	//glDepthMask(GL_FALSE);
 	glDepthRange(0.0, .99996);
 	//glEnable(GL_BLEND);

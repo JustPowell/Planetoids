@@ -10,11 +10,11 @@ void main()
 
 	vec4 color = vec4(1.0, 1.0, 1.0, 1.0);
 	vec3 normal = normalize(vec3(v_Normal));
-	vec3 lightDirection = normalize(vec3(0.0, 0.0, 1.0) - vec3(v_Position));
-	float nDotL = abs(dot(lightDirection, normal));
-	vec3 ambient = vec3(0.2, 0.2, 0.2) * color.rgb;
-	vec3 diffuse = v_Color.rgb * color.rgb * nDotL;
-    FragColor = vec4((diffuse + ambient) * v_Color.rgb, v_Color.a);
+	vec3 lightDirection = normalize(vec3(100000.0, 0.0, 0.0) - vec3(v_Position));
+	float nDotL = max(dot(lightDirection, normal), 0);
+	vec3 ambient = vec3(0.1, 0.1, 0.1);
+	vec3 diffuse = v_Color.rgb * nDotL;
+    gl_FragColor = vec4((diffuse + ambient) * v_Color.rgb, v_Color.a);
 	//FragColor = color;
 	//gl_FragColor = v_color;
 }

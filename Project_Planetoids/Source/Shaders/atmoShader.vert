@@ -13,6 +13,8 @@ uniform float wavelength;
 out vec4 v_Color;
 out vec4 v_Position;
 out vec4 v_Normal;
+out vec3 scattering ;
+out vec3 extinction;
 
 const float Ns = 2.545e25;
 const float n  = 1.000278;
@@ -24,7 +26,7 @@ const float p  = 1;
 const vec3 Br = vec3(6.95e-6, 1.18e-5, 2.44e-5);
 const vec3 Bm = vec3(4e-7, 6e-7, 2.4e-6);
 const vec3 Brm = Br+Bm;
-const vec4 Esun = vec4(1.0, 1.0, 1.0, 30.0);
+const vec4 Esun = vec4(1.0, 1.0, 1.0, 15.0);
 const float g = 0.0;
  
 float log2_e = 1.0/log(2.0);
@@ -43,13 +45,14 @@ vec3 rayleigh(float theta)
  
     float phase = 1.0 + (theta*theta);
      
-    vec3 ret = pi316*phase*Br;
+   // vec3 ret = pi316*phase*Br;
+	vec3 ret = Br * (.75 * .75 * theta);
     return ret;
 }
  
 vec3 mie(float theta)
 {
-    float pi14 = 1.0/(4.0*PI);
+    float pi14 = 1.0/(2.0*PI);
  
     float g1 = (1.0-g)*(1.0-g);
     float g2 = 1.0+(g*g);
@@ -146,8 +149,8 @@ void main()
 	/*
 	vec4 rgb = lambda2rgb(rgb2);*/
 	
-	vec3 scattering = inScatter(dist, dot(normal.xyz, normalize(vec3(1, -1, 1))));
-	vec3 extinction = Fex(dist);
+	scattering = inScatter(dist, dot(normal.xyz, normalize(vec3(1, -1, 1))));
+	extinction = Fex(dist);
 	vec3 light = vec3(1, -1, 1);
 	vec4 rgb = (vec4(0.0, 0.0, 0.0, 1.0)*vec4(extinction, 1.0)) + vec4(scattering, 1.0);
 	v_Color = rgb;

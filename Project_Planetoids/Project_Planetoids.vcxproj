@@ -70,6 +70,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Managers\Classes\ShaderManager.cpp" />
+    <ClCompile Include="Source\Objects\Classes\Sky.cpp" />
     <ClCompile Include="Source\Objects\Classes\PObject.cpp" />
     <ClCompile Include="Source\Mesh\Classes\Mesh.cpp" />
     <ClCompile Include="Source\Misc\Classes\common.cpp" />
@@ -80,6 +82,8 @@
     <ClCompile Include="Source\Misc\Classes\Vector3d.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Managers\Headers\ShaderManager.h" />
+    <ClInclude Include="Source\Objects\Headers\Sky.h" />
     <ClInclude Include="Source\Objects\Headers\PObject.h" />
     <ClInclude Include="Source\Mesh\Headers\Mesh.h" />
     <ClInclude Include="Source\Mesh\Headers\Geometry.h" />
@@ -90,6 +94,16 @@
     <ClInclude Include="Source\Misc\Headers\Vector3d.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Source\Shaders\atmoShader.frag" />
+    <None Include="Source\Shaders\atmoShader.vert" />
+    <None Include="Source\Shaders\atmoShader2.frag" />
+    <None Include="Source\Shaders\atmoShader2.vert" />
+    <None Include="Source\Shaders\atmoShader3.frag" />
+    <None Include="Source\Shaders\atmoShader3.vert" />
+    <None Include="Source\Shaders\atmoShader4.frag" />
+    <None Include="Source\Shaders\atmoShader4.vert" />
+    <None Include="Source\Shaders\edgeShader.frag" />
+    <None Include="Source\Shaders\edgeShader.vert" />
     <None Include="Source\Shaders\shadertest.frag" />
     <None Include="Source\Shaders\shadertest.vert" />
   </ItemGroup>

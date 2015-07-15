@@ -1,11 +1,15 @@
 #pragma once
 #include "../../Headers/Planetoids.h"
 #include "../../Mesh/Headers/PlanetMesh.h"
+#include "../../Objects/Headers/Sky.h"
+#include "../../Managers/Headers/ShaderManager.h"
+
+extern GLuint atmoProgram, edgeProgram, terrainProgram;
 
 class PObject
 {
 public:
-	PObject(string name, GLfloat radius);
+	PObject(string name, GLfloat radius, ShaderManager* sManager);
 	~PObject();
 
 	void setName(string name);
@@ -22,8 +26,10 @@ public:
 	glm::vec3	getLoc();
 	GLuint		getShader();
 	PlanetMesh	getMesh();
+	Sky&			getSky();
 
 private:
+	ShaderManager* sManager;
 	int mult = 1;
 	string name;
 	GLfloat radius;
@@ -32,21 +38,23 @@ private:
 	glm::vec3 loc;
 	glm::mat4 modelMatrix;
 
-	GLuint faceProgram, edgeProgram, atmoProgram, atmoEProgram;
-	PlanetMesh mesh, atmo;
+	PlanetMesh mesh;
+	Sky sky;
 
 	GLuint vBuffer, cBuffer, nBuffer, iBuffer;
-	GLuint vaBuffer, caBuffer, naBuffer, iaBuffer;
-	GLuint u_PMatrix = 0, u_VMatrix = 0, u_MMatrix = 0, u_CameraPos = 0, f_lambda = 0;
+	
+	GLuint u_PMatrix = 0, u_VMatrix = 0, u_MMatrix = 0;
 	GLuint a_position = 0, a_normal = 0, a_color = 0;
 
+	GLuint u_PMatrix2 = 0, u_VMatrix2 = 0, u_MMatrix2 = 0;
+	GLuint a_position2 = 0;
+
 	void bufferTerrainObjects();
-	void bufferAtmoObjects();
+
 	void bindTerrainBuffers(int wireframe);
-	void bindAtmoBuffers();
+
 
 	void loadShaderVariables();
-	void loadShader(GLuint& shaderProgram, string shaderName);
-	void createShader(GLuint& shaderProgram, const char* shadertext, GLuint& s_obj);
+	
 };
 

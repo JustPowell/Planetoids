@@ -45,6 +45,12 @@
     <ClCompile Include="Source\Objects\Classes\PObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Objects\Classes\Sky.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Managers\Classes\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Player\Camera.h">
@@ -71,9 +77,25 @@
     <ClInclude Include="Source\Objects\Headers\PObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Objects\Headers\Sky.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Managers\Headers\ShaderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\shadertest.frag" />
     <None Include="Source\Shaders\shadertest.vert" />
+    <None Include="Source\Shaders\atmoShader.frag" />
+    <None Include="Source\Shaders\atmoShader.vert" />
+    <None Include="Source\Shaders\atmoShader2.frag" />
+    <None Include="Source\Shaders\atmoShader2.vert" />
+    <None Include="Source\Shaders\atmoShader3.frag" />
+    <None Include="Source\Shaders\atmoShader3.vert" />
+    <None Include="Source\Shaders\atmoShader4.frag" />
+    <None Include="Source\Shaders\atmoShader4.vert" />
+    <None Include="Source\Shaders\edgeShader.frag" />
+    <None Include="Source\Shaders\edgeShader.vert" />
   </ItemGroup>
 </Project>

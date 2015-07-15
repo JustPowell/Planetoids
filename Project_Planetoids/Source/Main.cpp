@@ -1,7 +1,7 @@
 #include "./Headers/Planetoids.h"
 #include "./Mesh/Headers/PlanetMesh.h"
 #include "./Objects/Headers/PObject.h"
-
+#include "./Managers/Headers/ShaderManager.h"
 
 #define SUB_LVL 0
 #define planet 0
@@ -10,13 +10,10 @@ void init(GLFWwindow* window);
 void draw(GLFWwindow* window);
 void update();
 
-void initShaders(GLuint s_program, string vShader, string fShader);
-void createShader(GLuint s_program, const char* shaderText, GLenum s_type);
-void loadShader(GLuint s_program, string shaderName, GLenum s_type);
-
 PObject* planetObj;
 PObject* planetObj2;
 Camera* camera;
+ShaderManager* sManager;
 
 bool wireframe = false;
 GLfloat r = 10.f;
@@ -41,6 +38,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 	camera->move(key, action);
 	planetObj->changeLambda(key, action, mods);
+	planetObj->getSky().updateShader(key, action, mods);
 }
 
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -103,7 +101,7 @@ int main(void)
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	delete planetObj;
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 	exit(EXIT_SUCCESS);
 	
 	//delete planetObj2;
@@ -112,6 +110,7 @@ int main(void)
 
 void init(GLFWwindow* window)
 {
+	sManager = new ShaderManager();
 	//glm::vec3 pos(-120.f, 0.f, 0.f);
 	int r = 6400.f;
 	glm::vec3 pos(0.f, -r - 1, 0.f);
@@ -119,7 +118,7 @@ void init(GLFWwindow* window)
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
 
-	planetObj = new PObject("shaderTest", r);
+	planetObj = new PObject("shaderTest", r, sManager);
 	//planetObj2 = new PObject("shaderTest", 100.f);
 	planetObj->setLoc(glm::vec3( 0.f, 0.f, 0.f));
 	//planetObj2->setLoc(glm::vec3(150.f, 0.f, 0.f));
@@ -138,9 +137,11 @@ void init(GLFWwindow* window)
 
 void draw(GLFWwindow* window)
 {
+	//glClearColor(0, .5, .5, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	planetObj->draw(camera);
+	planetObj->getSky().draw(camera);
 	//planetObj2->draw(camera);
 
 	glfwSwapBuffers(window);

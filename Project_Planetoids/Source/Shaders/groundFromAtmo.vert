@@ -15,7 +15,7 @@ uniform float ESun;// = 30.f;// = 10.f;
 uniform vec3 v3InvWaveLength;// = 1/ vec3(pow(.650, 4), pow(.570, 4), pow(.475, 4));
 
 const float PI = 3.141592654;
-uniform float fInnerRadius;// = 10.f;
+uniform float fInnerRadius;
 float fOuterRadius = fInnerRadius * 1.025;
 float fInnerRadius2 = pow(fInnerRadius, 2);
 float fOuterRadius2 = pow(fOuterRadius, 2);
@@ -68,10 +68,7 @@ void main()
 	float fFar = length(v3ray);
 	v3ray /= fFar;
 	
-	float fNear = getNearIntersection(v3CameraPos, v3ray, pow(fCameraHeight, 2), fOuterRadius2);
-	
-	vec3 v3start = v3CameraPos + v3ray * fNear;
-	fFar -= fNear;
+	vec3 v3start = v3CameraPos;
 	float fdepth = exp((fInnerRadius - fCameraHeight) / fScaleDepth);
 	float fCameraAngle = dot(-v3ray, v3pos) / length(v3pos);
 	float fLightAngle = dot(v3LightDirection, v3pos) / length(v3pos);
@@ -98,6 +95,6 @@ void main()
 	}
 	
 	c0.rgb = v3FrontColor * (v3InvWaveLength * fKrESun + fKmESun);
-	v_Color += (.1 *c0);
+	v_Color += (.1 * c0);
 	c1.rgb = v3Attenuate;
 }

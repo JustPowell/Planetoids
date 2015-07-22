@@ -51,6 +51,9 @@
     <ClCompile Include="Source\Managers\Classes\ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Objects\Classes\Star.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Player\Camera.h">
@@ -83,6 +86,9 @@
     <ClInclude Include="Source\Managers\Headers\ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Objects\Headers\Star.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\shadertest.frag" />
@@ -97,5 +103,13 @@
     <None Include="Source\Shaders\atmoShader4.vert" />
     <None Include="Source\Shaders\edgeShader.frag" />
     <None Include="Source\Shaders\edgeShader.vert" />
+    <None Include="Source\Shaders\atmoFromSpace.frag" />
+    <None Include="Source\Shaders\atmoFromSpace.vert" />
+    <None Include="Source\Shaders\edgeShader2.frag" />
+    <None Include="Source\Shaders\edgeShader2.vert" />
+    <None Include="Source\Shaders\groundFromAtmo.frag" />
+    <None Include="Source\Shaders\groundFromAtmo.vert" />
+    <None Include="Source\Shaders\starShader.frag" />
+    <None Include="Source\Shaders\starShader.vert" />
   </ItemGroup>
 </Project>

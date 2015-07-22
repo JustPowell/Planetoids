@@ -7,7 +7,7 @@ in vec3 c0;
 in vec3 c1;
 in vec3 v3Direction;
 float g = -0.990f;
-vec3 v3LightDirection = vec3 (0.f, 0.0f, 1.0f);
+vec3 v3LightDirection = vec3 (0.f, 1.0f, 0.0f);
 //uniform float g2 = g*g;
 
 out vec4 FragColor;

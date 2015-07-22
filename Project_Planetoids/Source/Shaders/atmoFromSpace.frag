@@ -2,7 +2,7 @@
 
 in vec4 v_Color;
 in vec4 v_Position;
-//in vec4 v_Normal;
+
 in vec4 c0;
 in vec4 c1;
 in vec3 v3Direction;

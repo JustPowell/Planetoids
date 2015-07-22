@@ -16,8 +16,9 @@ public:
 	void setViewMatrix(const glm::mat4& viewMatrix);
 	glm::mat4 getViewMatrix();
 
-	void move(int key, int action);
+	void move(int key, int action, int mods);
 	void move(GLFWwindow* window, double xpos, double ypos);
+	float getSpeed();
 private:
 	glm::vec3 pos;
 	glm::vec3 target;
@@ -28,7 +29,7 @@ private:
 	float hangle = 3.14f;
 	float vangle = 0.f;
 	float initFov = 45.f;
-	float speed = 50.f;
+	float speed = .5f;
 	float mousespeed = .00005f;
 };
 

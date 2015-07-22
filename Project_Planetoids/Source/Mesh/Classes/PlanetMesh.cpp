@@ -6,12 +6,12 @@ PlanetMesh::PlanetMesh()
 	this->setSubdivisionLvl(0);
 }
 
-PlanetMesh::PlanetMesh(GLfloat r, int sublvl, int random)
+PlanetMesh::PlanetMesh(GLfloat r, int sublvl, int random, int atmo)
 {
 	this->random = random;
 	this->setRadius(r);
 	this->setSubdivisionLvl(sublvl);
-	this->buildPlanet();
+	this->buildPlanet(atmo);
 }
 
 PlanetMesh::~PlanetMesh()
@@ -28,11 +28,14 @@ void PlanetMesh::setSubdivisionLvl(int sublvl)
 	this->sublvl = sublvl;
 }
 
-void PlanetMesh::buildPlanet()
+void PlanetMesh::buildPlanet(int atmo)
 {
 	this->initVertices(this->sublvl);
-	this->initCube();
-	this->subdivide(this->sublvl);
+	this->initCube(atmo);
+	if (atmo)
+		this->initAtmoCube();
+	else
+		this->subdivide(this->sublvl);
 	this->toSphere();
 }
 
@@ -67,89 +70,168 @@ void PlanetMesh::initVertices(int sublvl)
 	
 }
 
+void PlanetMesh::initAtmoCube()
+{
+	GLfloat r = this->radius;
+	
+	 Vertex *vert = new Vertex(vector3f(-r / 2.0, r, r / 2.0));
+	this->addV(vert);
+
+	vert = new Vertex(vector3f(r / 2.0, r, r / 2.0));
+	this->addV(vert);
+
+	vert = new Vertex(vector3f(r / 2.0, r, -r / 2.0));
+	this->addV(vert);
+
+	vert = new Vertex(vector3f(-r / 2.0, r, -r / 2.0));
+	this->addV(vert);
+	//------------------------------------------------------
+	vert = new Vertex(vector3f(-r / 4.0, r, r / 4.0));
+	this->addV(vert);
+
+	vert = new Vertex(vector3f(r / 4.0, r, r / 4.0));
+	this->addV(vert);
+
+	vert = new Vertex(vector3f(r / 4.0, r, -r / 4.0));
+	this->addV(vert);
+
+	vert = new Vertex(vector3f(-r / 4.0, r, -r / 4.0));
+	this->addV(vert);
+
+	//---------------------------------------------------------------
+	// New Side
+
+	/*Face* f = new Face(this->getVerts()[11], this->getVerts()[8], this->getVerts()[9], this->getVerts()[10]);
+	this->addF(f);
+	this->addEdges(f);
+	*/
+	Face* f = new Face(this->getVerts()[15], this->getVerts()[12], this->getVerts()[13], this->getVerts()[14]);
+	this->addF(f);
+	this->addEdges(f);
+
+	f = new Face(this->getVerts()[11], this->getVerts()[8], this->getVerts()[12], this->getVerts()[15]);
+	this->addF(f);
+	this->addEdges(f);
+
+	f = new Face(this->getVerts()[12], this->getVerts()[8], this->getVerts()[9], this->getVerts()[13]);
+	this->addF(f);
+	this->addEdges(f);
+
+	f = new Face(this->getVerts()[14], this->getVerts()[13], this->getVerts()[9], this->getVerts()[10]);
+	this->addF(f);
+	this->addEdges(f);
+
+	f = new Face(this->getVerts()[11], this->getVerts()[15], this->getVerts()[14], this->getVerts()[10]);
+	this->addF(f);
+	this->addEdges(f);
+	this->subdivide(7);
+	
+	//---------------------------------------------------------------
+	// New Side
+	f = new Face(this->getVerts()[4], this->getVerts()[0], this->getVerts()[8], this->getVerts()[11]);
+	this->addF(f);
+	this->addEdges(f);
+
+	f = new Face(this->getVerts()[8], this->getVerts()[0], this->getVerts()[1], this->getVerts()[9]);
+	this->addF(f);
+	this->addEdges(f);
+
+	f = new Face(this->getVerts()[10], this->getVerts()[9], this->getVerts()[1], this->getVerts()[5]);
+	this->addF(f);
+	this->addEdges(f);
+
+	f = new Face(this->getVerts()[4], this->getVerts()[11], this->getVerts()[10], this->getVerts()[5]);
+	this->addF(f);
+	this->addEdges(f);
+	
+}
+
 PlanetMesh::side* PlanetMesh::getSide(int idx)
 {
 	return this->cubeside[idx];
 }
 
-void PlanetMesh::initCube()
+void PlanetMesh::initCube(int atmo)
 {
-	
-	//Init sides----------------------------
-	this->cubeside.push_back(new side);
-	this->cubeside.push_back(new side);
-	this->cubeside.push_back(new side);
-	this->cubeside.push_back(new side);
-	this->cubeside.push_back(new side);
-	this->cubeside.push_back(new side);
-	//--------------------------------------
+	if (!atmo)
+	{
+		//Init sides----------------------------
+		this->cubeside.push_back(new side);
+		this->cubeside.push_back(new side);
+		this->cubeside.push_back(new side);
+		this->cubeside.push_back(new side);
+		this->cubeside.push_back(new side);
+		this->cubeside.push_back(new side);
+		//--------------------------------------
 
-	//Side 0--------------------------------
-	this->cubeside[0]->top = this->cubeside[4];
-	this->cubeside[0]->bot = this->cubeside[5];
-	this->cubeside[0]->left = this->cubeside[3];
-	this->cubeside[0]->right = this->cubeside[1];
-	Face* f = new Face(this->getVerts()[0], this->getVerts()[3], this->getVerts()[2], this->getVerts()[1]);
-	this->addF(f);
-	this->addEdges(f);
-	this->cubeside[0]->faceList.push_back(f);
-	//--------------------------------------
-	
-	//Side 1--------------------------------
-	this->cubeside[1]->top = this->cubeside[4];
-	this->cubeside[1]->bot = this->cubeside[5];
-	this->cubeside[1]->left = this->cubeside[0];
-	this->cubeside[1]->right = this->cubeside[2];
-	f = new Face(this->getVerts()[1], this->getVerts()[2], this->getVerts()[6], this->getVerts()[5]);
-	this->addF(f);
-	this->addEdges(f);
-	this->cubeside[1]->faceList.push_back(f);
-	//--------------------------------------
+		//Side 0--------------------------------
+		this->cubeside[0]->top = this->cubeside[4];
+		this->cubeside[0]->bot = this->cubeside[5];
+		this->cubeside[0]->left = this->cubeside[3];
+		this->cubeside[0]->right = this->cubeside[1];
+		Face* f = new Face(this->getVerts()[0], this->getVerts()[3], this->getVerts()[2], this->getVerts()[1]);
+		this->addF(f);
+		this->addEdges(f);
+		this->cubeside[0]->faceList.push_back(f);
+		//--------------------------------------
 
-	//Side 2--------------------------------
-	this->cubeside[2]->top = this->cubeside[4];
-	this->cubeside[2]->bot = this->cubeside[5];
-	this->cubeside[2]->left = this->cubeside[1];
-	this->cubeside[2]->right = this->cubeside[3];
-	f = new Face(this->getVerts()[5], this->getVerts()[6], this->getVerts()[7], this->getVerts()[4]);
-	this->addF(f);
-	this->addEdges(f);
-	this->cubeside[2]->faceList.push_back(f);
-	//--------------------------------------
+		//Side 1--------------------------------
+		this->cubeside[1]->top = this->cubeside[4];
+		this->cubeside[1]->bot = this->cubeside[5];
+		this->cubeside[1]->left = this->cubeside[0];
+		this->cubeside[1]->right = this->cubeside[2];
+		f = new Face(this->getVerts()[1], this->getVerts()[2], this->getVerts()[6], this->getVerts()[5]);
+		this->addF(f);
+		this->addEdges(f);
+		this->cubeside[1]->faceList.push_back(f);
+		//--------------------------------------
 
-	//Side 3--------------------------------
-	this->cubeside[3]->top = this->cubeside[4];
-	this->cubeside[3]->bot = this->cubeside[5];
-	this->cubeside[3]->left = this->cubeside[2];
-	this->cubeside[3]->right = this->cubeside[0];
-	f = new Face(this->getVerts()[4], this->getVerts()[7], this->getVerts()[3], this->getVerts()[0]);
-	this->addF(f);
-	this->addEdges(f);
-	this->cubeside[3]->faceList.push_back(f);
-	//--------------------------------------
+		//Side 2--------------------------------
+		this->cubeside[2]->top = this->cubeside[4];
+		this->cubeside[2]->bot = this->cubeside[5];
+		this->cubeside[2]->left = this->cubeside[1];
+		this->cubeside[2]->right = this->cubeside[3];
+		f = new Face(this->getVerts()[5], this->getVerts()[6], this->getVerts()[7], this->getVerts()[4]);
+		this->addF(f);
+		this->addEdges(f);
+		this->cubeside[2]->faceList.push_back(f);
+		//--------------------------------------
 
-	//Side 4--------------------------------
-	this->cubeside[4]->top = this->cubeside[2];
-	this->cubeside[4]->bot = this->cubeside[0];
-	this->cubeside[4]->left = this->cubeside[3];
-	this->cubeside[4]->right = this->cubeside[1];
-	f = new Face(this->getVerts()[4], this->getVerts()[0], this->getVerts()[1], this->getVerts()[5]);
-	this->addF(f);
-	this->addEdges(f);
-	this->cubeside[4]->faceList.push_back(f);
-	//--------------------------------------
+		//Side 3--------------------------------
+		this->cubeside[3]->top = this->cubeside[4];
+		this->cubeside[3]->bot = this->cubeside[5];
+		this->cubeside[3]->left = this->cubeside[2];
+		this->cubeside[3]->right = this->cubeside[0];
+		f = new Face(this->getVerts()[4], this->getVerts()[7], this->getVerts()[3], this->getVerts()[0]);
+		this->addF(f);
+		this->addEdges(f);
+		this->cubeside[3]->faceList.push_back(f);
+		//--------------------------------------
 
-	//Side 5--------------------------------
-	this->cubeside[5]->top = this->cubeside[0];
-	this->cubeside[5]->bot = this->cubeside[2];
-	this->cubeside[5]->left = this->cubeside[3];
-	this->cubeside[5]->right = this->cubeside[1];
-	f = new Face(this->getVerts()[3], this->getVerts()[7], this->getVerts()[6], this->getVerts()[2]);
-	this->addF(f);
-	this->addEdges(f);
-	this->cubeside[5]->faceList.push_back(f);
-	//--------------------------------------
-	
+
+		//Side 4--------------------------------
+		this->cubeside[4]->top = this->cubeside[2];
+		this->cubeside[4]->bot = this->cubeside[0];
+		this->cubeside[4]->left = this->cubeside[3];
+		this->cubeside[4]->right = this->cubeside[1];
+		f = new Face(this->getVerts()[4], this->getVerts()[0], this->getVerts()[1], this->getVerts()[5]);
+		this->addF(f);
+		this->addEdges(f);
+		this->cubeside[4]->faceList.push_back(f);
+		//--------------------------------------
+
+
+		//Side 5--------------------------------
+		this->cubeside[5]->top = this->cubeside[0];
+		this->cubeside[5]->bot = this->cubeside[2];
+		this->cubeside[5]->left = this->cubeside[3];
+		this->cubeside[5]->right = this->cubeside[1];
+		f = new Face(this->getVerts()[3], this->getVerts()[7], this->getVerts()[6], this->getVerts()[2]);
+		this->addF(f);
+		this->addEdges(f);
+		this->cubeside[5]->faceList.push_back(f);
+		//--------------------------------------
+	}
 }
 
 void PlanetMesh::subdivide(int sublvl)

@@ -2,6 +2,7 @@
 #include "./Mesh/Headers/PlanetMesh.h"
 #include "./Objects/Headers/PObject.h"
 #include "./Managers/Headers/ShaderManager.h"
+#include "./Objects/Headers//Star.h"
 
 #define SUB_LVL 0
 #define planet 0
@@ -12,6 +13,7 @@ void update();
 
 PObject* planetObj;
 PObject* planetObj2;
+Star* star;
 Camera* camera;
 ShaderManager* sManager;
 
@@ -36,9 +38,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		wireframe = true;
 	}
-	camera->move(key, action);
+	camera->move(key, action, mods);
 	planetObj->changeLambda(key, action, mods);
 	planetObj->getSky().updateShader(key, action, mods);
+	//planetObj2->getSky().updateShader(key, action, mods);
 }
 
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -94,6 +97,10 @@ int main(void)
 		//draw(window, shaderProgram, 0);
 		camera->update();
 		planetObj->update();
+		planetObj->getSky().update(camera);
+		//planetObj2->update();
+		//planetObj2->getSky().update(camera);
+		star->update();
 		//planetObj2->update();
 		draw(window);
 	}
@@ -112,16 +119,18 @@ void init(GLFWwindow* window)
 {
 	sManager = new ShaderManager();
 	//glm::vec3 pos(-120.f, 0.f, 0.f);
-	int r = 6400.f;
-	glm::vec3 pos(0.f, -r - 1, 0.f);
+	int r = 10.f;
+	glm::vec3 pos(100.f, r + 1, 0.f);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
 
 	planetObj = new PObject("shaderTest", r, sManager);
-	//planetObj2 = new PObject("shaderTest", 100.f);
-	planetObj->setLoc(glm::vec3( 0.f, 0.f, 0.f));
-	//planetObj2->setLoc(glm::vec3(150.f, 0.f, 0.f));
+	star = new Star("starShader", 1087.0f, sManager);
+	star->setLoc(glm::vec3(20000.f, 0, 0));
+	//planetObj2 = new PObject("shaderTest", 8.f, sManager);
+	planetObj->setLoc(glm::vec3(100.f, 0.f, 0.f));
+	//planetObj2->setLoc(glm::vec3(0.f, 100.f, 0.f));
 
 	float ratio;
 	int width, height;
@@ -140,9 +149,12 @@ void draw(GLFWwindow* window)
 	//glClearColor(0, .5, .5, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	star->draw(camera);
 	planetObj->draw(camera);
 	planetObj->getSky().draw(camera);
+	
 	//planetObj2->draw(camera);
+	//planetObj2->getSky().draw(camera);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

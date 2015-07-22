@@ -80,6 +80,7 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mesh\Classes\PlanetMesh.cpp" />
     <ClCompile Include="Source\Misc\Classes\Vector3d.cpp" />
+    <ClCompile Include="Source\Objects\Classes\Star.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Managers\Headers\ShaderManager.h" />
@@ -92,8 +93,11 @@
     <ClInclude Include="Source\Mesh\Headers\PlanetMesh.h" />
     <ClInclude Include="Source\Headers\Planetoids.h" />
     <ClInclude Include="Source\Misc\Headers\Vector3d.h" />
+    <ClInclude Include="Source\Objects\Headers\Star.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Source\Shaders\atmoFromSpace.frag" />
+    <None Include="Source\Shaders\atmoFromSpace.vert" />
     <None Include="Source\Shaders\atmoShader.frag" />
     <None Include="Source\Shaders\atmoShader.vert" />
     <None Include="Source\Shaders\atmoShader2.frag" />
@@ -104,8 +108,14 @@
     <None Include="Source\Shaders\atmoShader4.vert" />
     <None Include="Source\Shaders\edgeShader.frag" />
     <None Include="Source\Shaders\edgeShader.vert" />
+    <None Include="Source\Shaders\edgeShader2.frag" />
+    <None Include="Source\Shaders\edgeShader2.vert" />
+    <None Include="Source\Shaders\groundFromAtmo.frag" />
+    <None Include="Source\Shaders\groundFromAtmo.vert" />
     <None Include="Source\Shaders\shadertest.frag" />
     <None Include="Source\Shaders\shadertest.vert" />
+    <None Include="Source\Shaders\starShader.frag" />
+    <None Include="Source\Shaders\starShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

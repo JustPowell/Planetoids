@@ -41,4 +41,4 @@ typedef glm::vec3 vector3f;
 typedef glm::vec3 color3f;
 typedef glm::vec3 normal3f;
 
-static glm::mat4 proj = glm::perspective(30.0f, (float)1440 / (float)900, 0.1f, 100000.f);
+static glm::mat4 proj = glm::perspective(30.0f, (float)1440 / (float)900, 0.001f, 10000000.f);

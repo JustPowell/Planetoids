@@ -12,12 +12,12 @@ class PlanetMesh : public Mesh
 {
 public:
 	PlanetMesh();
-	PlanetMesh(GLfloat radius, int sublvl, int random = 0);
+	PlanetMesh(GLfloat radius, int sublvl, int random = 0, int atmo = 0);
 	~PlanetMesh();
 
 	void setRadius(GLfloat radius);
 	void setSubdivisionLvl(int sublvl);
-	void buildPlanet();
+	void buildPlanet(int atmo);
 
 	struct side {
 		face_l faceList;
@@ -38,7 +38,8 @@ private:
 
 	vertex_l calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face *face);
 	void initVertices(int sublvl);
-	void initCube();
+	void initCube(int atmo);
+	void initAtmoCube();
 	void toSphere();
 
 	void addFace();

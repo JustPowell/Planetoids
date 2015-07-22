@@ -20,6 +20,7 @@ const float PI = 3.141592654;
 uniform float Kr;// = 0.0025f;
 uniform float Km;// = 0.0020f;
 uniform float ESun;// = 10.f;
+uniform vec3 v3InvWaveLength;
 
 uniform float fInnerRadius;
 float fOuterRadius = fInnerRadius * 1.025;
@@ -36,15 +37,20 @@ float fScale = 1.0 / (fOuterRadius - fInnerRadius); // 0.00626
 float fScaleDepth = .25f;				   
 float fScaleOverScaleDepth = fScale / fScaleDepth; // 0.025
 
-uniform int nSamples;
+uniform int nSamples;// = 4;
 float fSamples = float(nSamples);
 
 vec3 v3LightDirection = vec3(1.f, 0.f, 0.f);
-//vec3 v3InvWaveLength = 1/ vec3(pow(.650, 4), pow(.570, 4), pow(.475, 4));
-uniform vec3 v3InvWaveLength;// = 1/ vec3(pow(.700, 4), pow(.380, 4), pow(.700, 4));
-//vec3 v3InvWaveLength = 1/ vec3(pow(.380, 4), pow(.440, 4), pow(.675, 4));
-//vec3 v3InvWaveLength = 1/ vec3(pow(.456, 4), pow(.620, 4), pow(.700, 4));
+// = 1/ vec3(pow(.700, 4), pow(.380, 4), pow(.700, 4));
 //------------------------------------
+
+float getNearIntersection(vec3 v3Pos, vec3 v3Ray, float fDistance2, float fRadius2)
+{
+	float B = 2.0 * dot(v3Pos, v3Ray);
+	float C = fDistance2 - fRadius2;
+	float fDet = max(0.0, B*B - 4.0 * C);
+	return 0.5 * (-B - sqrt(fDet));
+}
 
 float scale(float fCos)
 {
@@ -54,20 +60,24 @@ float scale(float fCos)
 
 void main()
 {
-    gl_Position = projection * view * model * position;
+	gl_Position = projection * view * model * position;
 
-	vec3 v3CameraPos = (inverse(model) * vec4(cameraPos,1)).xyz;//v_Position.xyz;
+	vec3 v3CameraPos = (inverse(model) * vec4(cameraPos,1)).xyz;//v_Position.xyz; //cameraPos;
+	float fCameraHeight = length(v3CameraPos);
 	//------------------------------------
 	vec3 v3Pos = position.xyz;
 	vec3 v3Ray = (v3Pos - v3CameraPos).xyz;
 	float fFar = length(v3Ray);
 	v3Ray /= fFar;
 	
-	vec3 v3Start = v3CameraPos;
+	float fNear = getNearIntersection(v3CameraPos, v3Ray, pow(fCameraHeight, 2), fOuterRadius2);
+	fFar -= fNear;
+	
+	vec3 v3Start = v3CameraPos + v3Ray * fNear;
 	float fHeight = length(v3Start);
-	float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight));
-	float fStartAngle = dot(v3Ray, v3Start) / fHeight;
-	float fStartOffset = fDepth * scale(fStartAngle);
+	float fStartAngle = dot(v3Ray, v3Start) / fOuterRadius;
+	float fStartDepth = exp(-1.0 / fScaleDepth);
+	float fStartOffset = fStartDepth * scale(fStartAngle);
 	
 	float fSampleLength = fFar / fSamples;
 	float fScaledLength = fSampleLength * fScale;
@@ -81,7 +91,7 @@ void main()
 		float fdepth = exp(fScaleOverScaleDepth * (fInnerRadius - fheight));
 		float fLightAngle = dot(v3LightDirection, v3SamplePoint) / fheight;
 		float fCameraAngle = dot(v3Ray, v3SamplePoint) / fheight;
-		float fScatter = fStartOffset + fdepth * (scale(fLightAngle) - scale(fCameraAngle));
+		float fScatter = (fStartOffset + fdepth * (scale(fLightAngle) - scale(fCameraAngle)));
 		vec3 v3Attenuate = exp(-fScatter * (v3InvWaveLength * fKr4PI + fKm4pi));
 		v3FrontColor += v3Attenuate * (fdepth * fScaledLength);
 		v3SamplePoint += v3SampleRay;
@@ -89,5 +99,4 @@ void main()
 	c1.rgb = v3FrontColor * fKmESun;
 	c0.rgb = v3FrontColor * (v3InvWaveLength * fKrESun);
 	v3Direction = v3CameraPos - v3Pos;
-	//------------------------------------
 }

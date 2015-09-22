@@ -20,7 +20,7 @@ public:
 	float Km = .001f;
 	float eSun = 30.f;
 	glm::vec3 v3InvWaveLength = glm::vec3(.650, .570, .475);
-	int nSamples = 4;
+	int nSamples = 10;
 
 private:
 	unordered_map<string, GLuint> programMap;

@@ -6,9 +6,10 @@ in vec4 v_Position;
 in vec4 c0;
 in vec4 c1;
 in vec3 v3Direction;
+in vec3 v3LightDirection;
 
 float g = -0.990f;
-vec3 v3LightDirection = vec3 (1.f, 0.0f, 0.0f);
+//vec3 v3LightDirection = vec3 (1.f, 0.0f, 0.0f);
 
 out vec4 FragColor;
 

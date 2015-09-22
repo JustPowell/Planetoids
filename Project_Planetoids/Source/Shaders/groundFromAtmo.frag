@@ -18,7 +18,7 @@ void main()
 	float nDotL = max(dot(lightDirection, normal), 0);
 	vec3 ambient = vec3(0.1, 0.1, 0.1);
 	vec3 diffuse = color.rgb * nDotL;
-    FragColor = (vec4((diffuse + ambient) * v_Color.rgb, v_Color.a)) + (.25 * c1);
+    FragColor = (.54 * c0) + (vec4((diffuse + ambient) * v_Color.rgb, v_Color.a)) + (.25 * c1);
 	//FragColor = color;
 	//gl_FragColor = v_color;
 }

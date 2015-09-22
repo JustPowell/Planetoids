@@ -84,8 +84,8 @@ void Star::draw(Camera* camera)
 	glUniformMatrix4fv(this->starShader.u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(this->starShader.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 
-	//glDepthRange(0.0, 1.0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDepthRange(0.0, 1.0);
+	glPolygonMode(GL_FRONT, GL_FILL);
 
 	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 }

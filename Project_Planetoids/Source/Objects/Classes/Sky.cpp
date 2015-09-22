@@ -19,8 +19,8 @@ Sky::Sky(GLfloat radius, ShaderManager* sManager, glm::vec3 loc = glm::vec3(0, 0
 	this->sManager = sManager;
 	this->setRadius(radius);
 	this->setLoc(loc);
-	//this->atmoMesh = PlanetMesh(this->radius, 7, 0, 1);
-	this->spaceMesh = PlanetMesh(this->radius, 7);
+	this->atmoMesh = PlanetMesh(this->radius, 3, 0, 1);
+	this->spaceMesh = PlanetMesh(this->radius, 8, 0);
 	this->modelMatrix = glm::mat4(1.0f);
 
 	sManager->createProgram("atmoShader2");
@@ -47,7 +47,7 @@ void Sky::setRadius(GLfloat radius)
 void Sky::update(Camera* camera)
 {
 	//TODO
-	this->cHeight = (glm::length(this->cameraPos) - 10.f) / (10.f * 1.025 - 10.f);
+	this->cHeight = ((glm::length(this->cameraPos) - glm::length(this->loc)) - 10.f) / (10.f * 1.025f - 10.f);
 	if (this->cHeight > 1.0)
 	{
 		this->cp = this->atmoFromSpace;
@@ -59,7 +59,7 @@ void Sky::update(Camera* camera)
 	
 	//glm::vec3 ray = glm::normalize(this->cameraPos - glm::vec3(0, 0, 0));
 	//this->modelMatrix = /*glm::translate(this->modelMatrix, glm::vec3(0, 0, 0)) **/ glm::rotate(this->modelMatrix, .001f, glm::vec3(0, 1, 0));
-	this->modelMatrix = glm::translate(glm::mat4(1.f), this->loc);
+	this->modelMatrix = glm::translate(glm::mat4(1.f), this->loc);// *glm::rotate(glm::mat4(1.f), -89.5f, glm::vec3(0, 0, 1));
 
 }
 
@@ -73,56 +73,56 @@ void Sky::updateShader(int key, int action, int mods)
 	}
 	if (key == GLFW_KEY_1 && mods == GLFW_MOD_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->v3InvWaveLength.r -= .001;
-		if (this->sManager->v3InvWaveLength.r < .380f)
+		this->sManager->v3InvWaveLength.r -= .001f;
+		if (this->sManager->v3InvWaveLength.r < 0.0)//.380f)
 		{
-			this->sManager->v3InvWaveLength.r = .380f;
+			this->sManager->v3InvWaveLength.r = 0.0;// .380f;
 		}
 	}
 	else if (key == GLFW_KEY_1 && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->v3InvWaveLength.r += .001;
-		if (this->sManager->v3InvWaveLength.r > .780f)
+		this->sManager->v3InvWaveLength.r += .001f;
+		if (this->sManager->v3InvWaveLength.r > 1.0)// .780f)
 		{
-			this->sManager->v3InvWaveLength.r = .780f;
+			this->sManager->v3InvWaveLength.r = 1.0;//.780f;
 		}
 	}
 	if (key == GLFW_KEY_2 && mods == GLFW_MOD_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->v3InvWaveLength.g -= .001;
-		if (this->sManager->v3InvWaveLength.g < .380f)
+		this->sManager->v3InvWaveLength.g -= .001f;
+		if (this->sManager->v3InvWaveLength.g < 0.0)//.380f)
 		{
-			this->sManager->v3InvWaveLength.g = .380f;
+			this->sManager->v3InvWaveLength.g = 0.0;// .380f;
 		}
 	}
 	else if (key == GLFW_KEY_2 && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->v3InvWaveLength.g += .001;
-		if (this->sManager->v3InvWaveLength.g > .780f)
+		this->sManager->v3InvWaveLength.g += .001f;
+		if (this->sManager->v3InvWaveLength.g > 1.0)//.780f)
 		{
-			this->sManager->v3InvWaveLength.g = .780f;
+			this->sManager->v3InvWaveLength.g = 1.0;//.780f;
 		}
 	}
 	if (key == GLFW_KEY_3 && mods == GLFW_MOD_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->v3InvWaveLength.b -= .001;
-		if (this->sManager->v3InvWaveLength.b < .380f)
+		this->sManager->v3InvWaveLength.b -= .001f;
+		if (this->sManager->v3InvWaveLength.b < 0.0)//.380f)
 		{
-			this->sManager->v3InvWaveLength.b = .380f;
+			this->sManager->v3InvWaveLength.b = 0.0;// .380f;
 		}
 	}
 	else if (key == GLFW_KEY_3 && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->v3InvWaveLength.b += .001;
-		if (this->sManager->v3InvWaveLength.b > .780f)
+		this->sManager->v3InvWaveLength.b += .001f;
+		if (this->sManager->v3InvWaveLength.b > 1.0)//.780f)
 		{
-			this->sManager->v3InvWaveLength.b = .780f;
+			this->sManager->v3InvWaveLength.b = 1.0;//.780f;
 		}
 	}
 
 	if (key == GLFW_KEY_4 && mods == GLFW_MOD_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->Kr -= .0001;
+		this->sManager->Kr -= .0001f;
 		if (this->sManager->Kr < .0f)
 		{
 			this->sManager->Kr = .0f;
@@ -130,11 +130,11 @@ void Sky::updateShader(int key, int action, int mods)
 	}
 	else if (key == GLFW_KEY_4 && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->Kr += .0001;
+		this->sManager->Kr += .0001f;
 	}
 	if (key == GLFW_KEY_5 && mods == GLFW_MOD_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->Km -= .0001;
+		this->sManager->Km -= .0001f;
 		if (this->sManager->Km < .0f)
 		{
 			this->sManager->Km = .0f;
@@ -142,7 +142,7 @@ void Sky::updateShader(int key, int action, int mods)
 	}
 	else if (key == GLFW_KEY_5 && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
-		this->sManager->Km += .0001;
+		this->sManager->Km += .0001f;
 	}
 	if (key == GLFW_KEY_6 && mods == GLFW_MOD_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
@@ -165,11 +165,11 @@ void Sky::updateShader(int key, int action, int mods)
 			this->drawWire = 1;
 	}
 
-	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+	if (key == GLFW_KEY_0 && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
 		this->sManager->nSamples++;
 	}
-	if (key == GLFW_KEY_9 && action == GLFW_PRESS)
+	if (key == GLFW_KEY_9 && (action == GLFW_PRESS || action == GLFW_REPEAT))
 	{
 		this->sManager->nSamples--;
 		if (this->sManager->nSamples < 0)
@@ -177,43 +177,34 @@ void Sky::updateShader(int key, int action, int mods)
 			this->sManager->nSamples = 0;
 		}
 	}
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		if (this->mesh)
+		{
+			this->mesh--;
+		}
+		else{
+			this->mesh++;
+		}
+	}
 }
 
 void Sky::draw(Camera* camera)
 {
 	this->cameraPos = camera->getPos();
-	int numInd, s = 1;
+	int numInd, s = 0;
 	//numInd = this->spaceMesh.getNumInd();
-	if (this->cHeight > 1.0)
+	if (!mesh)
 	{
 		glFrontFace(GL_CW);
 		numInd = this->spaceMesh.getNumInd();
-		s = 1;
+		s = 0;
 	}
 	else{
 		glFrontFace(GL_CW);
-		numInd = this->spaceMesh.getNumInd();
+		numInd = this->atmoMesh.getNumInd();
 		s = 1;
 	}
-	
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-
-	glUseProgram(this->edgeShader.pId);
-	this->bindBuffers(1, s);
-
-	glUniformMatrix4fv(this->edgeShader.u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
-	glUniformMatrix4fv(this->edgeShader.u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
-	glUniformMatrix4fv(this->edgeShader.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
-
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-	
-	glDepthRange(0.0, 0.99999);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	if (this->drawWire)
-		glDrawElements(GL_QUADS, numInd, GL_UNSIGNED_INT, 0);
 
 	//--------------------------------------------------------------------------------------
 	
@@ -234,19 +225,19 @@ void Sky::draw(Camera* camera)
 	glUniform1f(this->cp.eSun, this->sManager->eSun);
 	glUniform3fv(this->cp.v3InvWaveLength, 1, glm::value_ptr(glm::vec3(1 / pow(this->sManager->v3InvWaveLength.r, 4), 1 / pow(this->sManager->v3InvWaveLength.g, 4), 1 / pow(this->sManager->v3InvWaveLength.b, 4))));
 	glUniform1i(this->cp.nSamples, this->sManager->nSamples);
-	glUniform1f(this->cp.radius, this->radius / 1.025);
-	printf("Camera Pos: %f %f %f %f \n %f %f %f \n Kr: %f\nKm: %f\neSun: %f\nSpeed: %f\nnSamples: %i", 
+	glUniform1f(this->cp.radius, this->radius / 1.025f);
+	printf("Camera Pos: %f %f %f %f \n %f %f %f \n Kr: %f\nKm: %f\neSun: %f\nSpeed: %f\nnSamples: %i\n nVA: %i nFA: %i\n nVS: %i nFS %i", 
 			this->cHeight, this->cameraPos.x, this->cameraPos.y, this->cameraPos.z, 
 			this->sManager->v3InvWaveLength.r, this->sManager->v3InvWaveLength.g, this->sManager->v3InvWaveLength.b,
 			this->sManager->Kr, this->sManager->Km, this->sManager->eSun,
 			camera->getSpeed(),
-			this->sManager->nSamples);
+			this->sManager->nSamples,
+			this->atmoMesh.getVerts().size(), this->atmoMesh.getFaces().size(),
+			this->spaceMesh.getVerts().size(), this->spaceMesh.getFaces().size());
 	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD coord;
 	coord.X = 0, coord.Y = 0;
 	SetConsoleCursorPosition(hStdOut, coord);
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
 
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -254,6 +245,24 @@ void Sky::draw(Camera* camera)
 	glDrawElements(GL_QUADS, numInd, GL_UNSIGNED_INT, 0);
 
 	glDepthMask(GL_TRUE);
+
+	//---------------------------------------------------------------------------------
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+
+	glUseProgram(this->edgeShader.pId);
+	this->bindBuffers(1, s);
+
+	glUniformMatrix4fv(this->edgeShader.u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(this->edgeShader.u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+	glUniformMatrix4fv(this->edgeShader.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
+
+	glDepthRange(0.0, 0.99999);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	if (this->drawWire)
+		glDrawElements(GL_QUADS, numInd, GL_UNSIGNED_INT, 0);
 }
 
 void Sky::setLoc(glm::vec3 loc)
@@ -304,16 +313,16 @@ void Sky::bufferObjects()
 	glGenBuffers(1, &this->iaBuffer2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->vaBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->atmoMesh.getVerts().size() * 3), &this->atmoMesh.getLocations()[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, this->iaBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*this->atmoMesh.getNumInd(), &this->atmoMesh.getIndices()[0], GL_STATIC_DRAW);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, this->vaBuffer2);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->spaceMesh.getVerts().size() * 3), &this->spaceMesh.getLocations()[0], GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, this->iaBuffer2);
+	glBindBuffer(GL_ARRAY_BUFFER, this->iaBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*this->spaceMesh.getNumInd(), &this->spaceMesh.getIndices()[0], GL_STATIC_DRAW);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, this->vaBuffer2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT)*(this->atmoMesh.getVerts().size() * 3), &this->atmoMesh.getLocations()[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, this->iaBuffer2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT)*this->atmoMesh.getNumInd(), &this->atmoMesh.getIndices()[0], GL_STATIC_DRAW);
 	
 }
 
@@ -371,9 +380,9 @@ void Sky::loadShader(Program& shader, string sName)
 
 void Sky::loadEdgeShader()
 {
-	this->edgeShader.pId = this->sManager->getProgram("edgeShader");
+	this->edgeShader.pId = this->sManager->getProgram("edgeShader2");
 	this->edgeShader.u_PMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader2"), "projection");
 	this->edgeShader.u_VMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader2"), "view");
-	this->edgeShader.u_MMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader2"), "Matrix");
+	this->edgeShader.u_MMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader2"), "model");
 	this->edgeShader.a_Position = glGetAttribLocation(this->sManager->getProgram("edgeShader2"), "position");
 }

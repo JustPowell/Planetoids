@@ -12,6 +12,7 @@ PlanetMesh::PlanetMesh(GLfloat r, int sublvl, int random, int atmo)
 	this->setRadius(r);
 	this->setSubdivisionLvl(sublvl);
 	this->buildPlanet(atmo);
+	this->sim = Simplex();
 }
 
 PlanetMesh::~PlanetMesh()
@@ -124,7 +125,7 @@ void PlanetMesh::initAtmoCube()
 	f = new Face(this->getVerts()[11], this->getVerts()[15], this->getVerts()[14], this->getVerts()[10]);
 	this->addF(f);
 	this->addEdges(f);
-	this->subdivide(7);
+	this->subdivide(this->sublvl);
 	
 	//---------------------------------------------------------------
 	// New Side
@@ -337,10 +338,11 @@ void PlanetMesh::toSphere()
 		theta = acos((loc.z / sqrt( pow(loc.x, 2) + pow(loc.y, 2) + pow(loc.z, 2))));
 		phi = atan2(loc.y, loc.x);
 
-		int randn;
-		if (this->random && (count2 % 10 == 0))
+		double randn;
+		if (this->random)// && (count2 % 10 == 0))
 		{
-			randn = 75;//(rand() % 50);
+			randn = .05*sim.noise(loc.x, loc.y, loc.z);//(rand() % 50);
+			//cout << randn << endl;
 			count2 = 0;
 		}
 		else

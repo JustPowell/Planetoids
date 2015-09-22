@@ -89,6 +89,9 @@
     <ClInclude Include="Source\Objects\Headers\Star.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shaders\shadertest.frag" />
@@ -111,5 +114,15 @@
     <None Include="Source\Shaders\groundFromAtmo.vert" />
     <None Include="Source\Shaders\starShader.frag" />
     <None Include="Source\Shaders\starShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Project_Planetoids.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Source\Misc\icon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -70,11 +70,20 @@ void PObject::changeLambda(int key, int action, int mods)
 	{
 		this->lambda = 380.f;
 	}
+
+	if (key == GLFW_KEY_LEFT_BRACKET && action == GLFW_PRESS)
+	{
+		this->setLoc(glm::vec3(0.f, 100.f, 0.f));
+	}
+	if (key == GLFW_KEY_RIGHT_BRACKET && action == GLFW_PRESS)
+	{
+		this->setLoc(glm::vec3(0.f, 0.f, 0.f));
+	}
 }
 
 void PObject::update()
 {
-	this->cHeight = (glm::length(this->cameraPos) - 10.f) / (10.f * 1.025 - 10.f);
+	this->cHeight = ((glm::length(this->cameraPos) - glm::length(this->loc)) - 10.f) / (10.f * 1.025 - 10.f);
 	if (this->cHeight > 1.0)
 	{
 		this->cp = this->groundFromSpace;
@@ -103,7 +112,7 @@ void PObject::update()
 void PObject::draw(Camera* camera)
 {
 	this->cameraPos = camera->getPos();
-
+	
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -139,7 +148,7 @@ void PObject::draw(Camera* camera)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDepthRange(0.0, 0.99999);
 
-	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 	//--------------------------------------------------------------------------------------
 	
 	
@@ -236,20 +245,6 @@ void PObject::loadShaderVariables()
 	this->loadShader(this->groundFromAtmo, "groundFromAtmo");
 	this->loadShader(this->groundFromSpace, "shaderTest");
 	this->loadEdgeShader();
-	/*this->u_PMatrix = glGetUniformLocation(this->sManager->getProgram("shaderTest"), "projection");
-	this->u_VMatrix = glGetUniformLocation(this->sManager->getProgram("shaderTest"), "view");
-	this->u_MMatrix = glGetUniformLocation(this->sManager->getProgram("shaderTest"), "model");
-	this->u_CameraPos = glGetUniformLocation(this->sManager->getProgram("shaderTest"), "cameraPos");
-
-	this->u_PMatrix2 = glGetUniformLocation(this->sManager->getProgram("edgeShader"), "projection");
-	this->u_VMatrix2 = glGetUniformLocation(this->sManager->getProgram("edgeShader"), "view");
-	this->u_MMatrix2 = glGetUniformLocation(this->sManager->getProgram("edgeShader"), "model");
-
-	this->a_position = glGetAttribLocation(this->sManager->getProgram("shaderTest"), "position");
-	this->a_normal = glGetAttribLocation(this->sManager->getProgram("shaderTest"), "normal");
-	this->a_color = glGetAttribLocation(this->sManager->getProgram("shaderTest"), "color");
-
-	this->a_position2 = glGetAttribLocation(this->sManager->getProgram("edgeShader"), "position");*/
 }
 
 PlanetMesh PObject::getMesh()
@@ -278,8 +273,8 @@ void PObject::loadShader(Program& shader, string sName)
 void PObject::loadEdgeShader()
 {
 	this->edgeShader.pId = this->sManager->getProgram("edgeShader");
-	this->edgeShader.u_PMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader2"), "projection");
-	this->edgeShader.u_VMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader2"), "view");
-	this->edgeShader.u_MMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader2"), "Matrix");
-	this->edgeShader.a_Position = glGetAttribLocation(this->sManager->getProgram("edgeShader2"), "position");
+	this->edgeShader.u_PMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader"), "projection");
+	this->edgeShader.u_VMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader"), "view");
+	this->edgeShader.u_MMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader"), "model");
+	this->edgeShader.a_Position = glGetAttribLocation(this->sManager->getProgram("edgeShader"), "position");
 }

@@ -39,9 +39,8 @@ float fScaleOverScaleDepth = fScale / fScaleDepth; // 0.025
 
 uniform int nSamples;// = 4;
 float fSamples = float(nSamples);
-
-vec3 v3LightDirection = vec3(1.f, 0.f, 0.f);
-// = 1/ vec3(pow(.700, 4), pow(.380, 4), pow(.700, 4));
+vec3 sunPos = vec3(4776.f, 0.f, 0.f);
+vec3 v3LightDirection = normalize(sunPos - vec3(0.f, 0.f, 0.f));//vec3(1.f, 0.f, 0.f);
 //------------------------------------
 
 float getNearIntersection(vec3 v3Pos, vec3 v3Ray, float fDistance2, float fRadius2)
@@ -61,11 +60,11 @@ float scale(float fCos)
 void main()
 {
 	gl_Position = projection * view * model * position;
-
-	vec3 v3CameraPos = (inverse(model) * vec4(cameraPos,1)).xyz;//v_Position.xyz; //cameraPos;
+	
+	vec3 v3CameraPos = cameraPos;//(inverse(model) * vec4(cameraPos,1)).xyz;
 	float fCameraHeight = length(v3CameraPos);
 	//------------------------------------
-	vec3 v3Pos = position.xyz;
+	vec3 v3Pos = (model * position).xyz;
 	vec3 v3Ray = (v3Pos - v3CameraPos).xyz;
 	float fFar = length(v3Ray);
 	v3Ray /= fFar;

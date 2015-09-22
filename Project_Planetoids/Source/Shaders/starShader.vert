@@ -17,5 +17,5 @@ void main()
 	gl_Position = projection * view * model * position;
 	v_Position = model * position;
 	v_Normal = normalize(transpose(inverse(model)) * normal);
-	v_Color = vec4(1, 1, 0, 1);
+	v_Color = vec4(1, 1, 1, 1);
 }

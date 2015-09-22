@@ -31,6 +31,7 @@ public:
 	void subdivide(int lvl);
 
 private:
+	Simplex sim;
 	int sublvl;
 	int random;
 	vector<side*> cubeside;

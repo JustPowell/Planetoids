@@ -38,8 +38,8 @@ float fScaleOverScaleDepth = fScale / fScaleDepth; // 0.025
 
 uniform int nSamples;
 float fSamples = float(nSamples);
-
-vec3 v3LightDirection = vec3(1.f, 0.f, 0.f);
+vec3 sunPos = vec3(4776.f, 0.f, 0.f);
+out vec3 v3LightDirection;
 //vec3 v3InvWaveLength = 1/ vec3(pow(.650, 4), pow(.570, 4), pow(.475, 4));
 uniform vec3 v3InvWaveLength;// = 1/ vec3(pow(.700, 4), pow(.380, 4), pow(.700, 4));
 //vec3 v3InvWaveLength = 1/ vec3(pow(.380, 4), pow(.440, 4), pow(.675, 4));
@@ -51,11 +51,12 @@ float scale(float fCos)
 	float x = 1.0 - fCos;
 	return fScaleDepth * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
 }
+ 
 
 void main()
 {
     gl_Position = projection * view * model * position;
-
+	v3LightDirection = normalize(sunPos - vec3(0.f, 0.f, 0.f));//vec3(0.f, 1.f, 0.f);
 	vec3 v3CameraPos = (inverse(model) * vec4(cameraPos,1)).xyz;//v_Position.xyz;
 	//------------------------------------
 	vec3 v3Pos = position.xyz;
@@ -83,7 +84,7 @@ void main()
 		float fCameraAngle = dot(v3Ray, v3SamplePoint) / fheight;
 		float fScatter = fStartOffset + fdepth * (scale(fLightAngle) - scale(fCameraAngle));
 		vec3 v3Attenuate = exp(-fScatter * (v3InvWaveLength * fKr4PI + fKm4pi));
-		v3FrontColor += v3Attenuate * (fdepth * fScaledLength);
+		v3FrontColor += v3Attenuate * (fdepth * fScaledLength);// * (-cos(v3Pos.y * v3Pos.x / v3Pos.z * 100) * .25 + .75);
 		v3SamplePoint += v3SampleRay;
 	}
 	c1.rgb = v3FrontColor * fKmESun;

@@ -2,7 +2,7 @@
 #include "./Mesh/Headers/PlanetMesh.h"
 #include "./Objects/Headers/PObject.h"
 #include "./Managers/Headers/ShaderManager.h"
-#include "./Objects/Headers//Star.h"
+#include "./Objects/Headers/Star.h"
 
 #define SUB_LVL 0
 #define planet 0
@@ -12,8 +12,7 @@ void draw(GLFWwindow* window);
 void update();
 
 PObject* planetObj;
-PObject* planetObj2;
-Star* star;
+//Star* star;
 Camera* camera;
 ShaderManager* sManager;
 
@@ -21,6 +20,16 @@ bool wireframe = false;
 GLfloat r = 10.f;
 
 int canmove = 0;
+
+/*GLfloat sqr[16] = { -10, 10, 10,
+					 10, 10, 10,
+					 10,-10, 10,
+				    -10,-10, 10};
+
+GLuint vbuffer;
+GLuint u_PMatrix = 0, u_VMatrix = 0, u_MMatrix = 0;
+GLuint a_position = 0;
+GLuint program;*/
 
 static void error_callback(int error, const char* description)
 {
@@ -40,27 +49,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 	camera->move(key, action, mods);
 	planetObj->changeLambda(key, action, mods);
-	planetObj->getSky().updateShader(key, action, mods);
-	//planetObj2->getSky().updateShader(key, action, mods);
+	//planetObj->getSky().updateShader(key, action, mods);
 }
 
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	//if (canmove)
-		//camera->move(window, xpos, ypos);
 }
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		//double xpos, ypos;
-		//int width, height;
-
-		//glfwGetCursorPos(window, &xpos, &ypos);
-		//glfwGetFramebufferSize(window, &width, &height);
-		//glfwSetCursorPos(window, (double)width/2, (double)height/2);
-		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		canmove = 1;
 	}
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
@@ -76,7 +75,7 @@ int main(void)
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
-	GLFWwindow* window = glfwCreateWindow(width, height, "Planetoids", glfwGetPrimaryMonitor(), NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Planetoids", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -88,20 +87,14 @@ int main(void)
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glewInit();
-	//int* blah = new int(3);
-	//char* b = (char*)malloc(20);
+
 	init(window);
 	while (!glfwWindowShouldClose(window))
 	{
-		//draw(window, shaderProgram2, 1);
-		//draw(window, shaderProgram, 0);
 		camera->update();
 		planetObj->update();
-		planetObj->getSky().update(camera);
-		//planetObj2->update();
-		//planetObj2->getSky().update(camera);
-		star->update();
-		//planetObj2->update();
+		//planetObj->getSky().update(camera);
+		//star->update();
 		draw(window);
 	}
 	
@@ -110,27 +103,36 @@ int main(void)
 	delete planetObj;
 	//_CrtDumpMemoryLeaks();
 	exit(EXIT_SUCCESS);
-	
-	//delete planetObj2;
-	//return 0;
 }
 
 void init(GLFWwindow* window)
 {
 	sManager = new ShaderManager();
-	//glm::vec3 pos(-120.f, 0.f, 0.f);
-	int r = 10.f;
-	glm::vec3 pos(r+.5f, 0.f, 0.f);
+
+	//sManager->createProgram("tess");
+	
+
+	int r = 5.f;
+	glm::vec3 pos(0.f, 0.f, -r*2);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
 
-	planetObj = new PObject("shaderTest", r, sManager);
-	star = new Star("starShader", 272.0f, sManager);
-	star->setLoc(glm::vec3(4776.f, 0, 0));
-	//planetObj2 = new PObject("shaderTest", 8.f, sManager);
+	//u_PMatrix = glGetUniformLocation(sManager->getProgram("tess"), "projection");
+	//u_MMatrix = glGetUniformLocation(sManager->getProgram("tess"), "model");
+	//u_VMatrix = glGetUniformLocation(sManager->getProgram("tess"), "view");
+	//a_position = glGetAttribLocation(sManager->getProgram("tess"), "position");
+
+	//glGenBuffers(1, &vbuffer);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 16, sqr, GL_DYNAMIC_DRAW_ARB);
+	
+
+	planetObj = new PObject("tess", r, sManager);
+	//star = new Star("starShader", 272.0f, sManager);
+	//star->setLoc(glm::vec3(4776.f, 0, 0));
+
 	planetObj->setLoc(glm::vec3(0.f, 0.f, 0.f));
-	//planetObj2->setLoc(glm::vec3(0.f, 100.f, 0.f));
 
 	float ratio;
 	int width, height;
@@ -149,13 +151,28 @@ void draw(GLFWwindow* window)
 	//glClearColor(0, .5, .5, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	star->draw(camera);
+	//star->draw(camera);
 	planetObj->draw(camera);
-	planetObj->getSky().draw(camera);
+	//planetObj->getSky().draw(camera);
+	/*glUseProgram(sManager->getProgram("tess"));
 	
-	//planetObj2->draw(camera);
-	//planetObj2->getSky().draw(camera);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbuffer);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableVertexAttribArray(a_position);
+	glVertexAttribPointer(a_position, 3, GL_FLOAT, false, 0, 0);
+	glVertexPointer(4, GL_FLOAT, 0, (char *)0);
+	
+	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDrawArrays(GL_QUADS, 0, 4);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);*/
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }

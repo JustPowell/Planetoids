@@ -6,7 +6,7 @@ PObject::PObject(string name, GLfloat radius, ShaderManager* sManager)
 	this->sManager = sManager;
 	this->setName(name);
 	this->setRadius(radius);
-	this->mesh = PlanetMesh(radius, 5, 0);
+	this->mesh = PlanetMesh(radius, 0, 0);
 	
 	this->modelMatrix = glm::mat4(1.0f);
 	this->setLoc(glm::vec3(0.f, 0.f, 0.f));
@@ -18,7 +18,7 @@ PObject::PObject(string name, GLfloat radius, ShaderManager* sManager)
 	this->loadShaderVariables();
 	this->bufferTerrainObjects();
 
-	this->sky = Sky(radius * 1.025, this->sManager, this->loc);
+	//this->sky = Sky(radius * 1.025, this->sManager, this->loc);
 }
 
 
@@ -40,8 +40,9 @@ void PObject::changeLambda(int key, int action, int mods)
 {
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		this->sManager->reloadShader("shaderTest");
+		this->sManager->reloadShader(this->getName());
 		this->sManager->reloadShader("groundFromAtmo");
+		this->sManager->reloadShader("edgeShader");
 		this->loadShaderVariables();
 	}
 	if (key == GLFW_KEY_EQUAL && mods == GLFW_MOD_SHIFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
@@ -90,22 +91,9 @@ void PObject::update()
 	}
 	else if (this->cHeight <= 1.0)
 	{
-		this->cp = this->groundFromAtmo;
+		//this->cp = this->groundFromAtmo;
+		this->cp = this->groundFromSpace;
 	}
-	/*if (this->lambda >= 780.0f || this->lambda <= 380.0f)
-	{
-		this->mult *= -1;
-	}
-	this->lambda += (.2500000f * mult);
-	if (this->lambda > 780.f)
-	{
-		this->lambda = 780.f;
-	}
-	else if (this->lambda < 380.f)
-	{
-		this->lambda = 380.f;
-	}*/
-	//printf("\rLambda: %f", this->lambda);
 	this->modelMatrix = glm::translate(glm::mat4(1.f), this->loc);// *glm::rotate(glm::mat4(1.f), (float)glfwGetTime()*.05f, glm::vec3(0.f, 1.f, 0.f));
 }
 
@@ -122,6 +110,7 @@ void PObject::draw(Camera* camera)
 	glUniformMatrix4fv(this->cp.u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(this->cp.u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(this->cp.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
+	/*
 	glUniform3fv(this->cp.cameraPos, 1, glm::value_ptr(camera->getPos()));
 	glUniform1f(this->cp.Kr, this->sManager->Kr);
 	glUniform1f(this->cp.Km, this->sManager->Km);
@@ -129,11 +118,13 @@ void PObject::draw(Camera* camera)
 	glUniform3fv(this->cp.v3InvWaveLength, 1, glm::value_ptr(glm::vec3(1 / pow(this->sManager->v3InvWaveLength.r, 4), 1 / pow(this->sManager->v3InvWaveLength.g, 4), 1 / pow(this->sManager->v3InvWaveLength.b, 4))));
 	glUniform1i(this->cp.nSamples, this->sManager->nSamples);
 	glUniform1f(this->cp.radius, this->radius);
-
+	*/
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+
+
 	//--------------------------------------------------------------------------------------
 	glUseProgram(this->edgeShader.pId);
 	this->bindTerrainBuffers(1);
@@ -142,20 +133,10 @@ void PObject::draw(Camera* camera)
 	glUniformMatrix4fv(this->edgeShader.u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(this->edgeShader.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 	
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDepthRange(0.0, 0.99999);
 
-	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
-	//--------------------------------------------------------------------------------------
-	
-	
-	
-	//--------------------------------------------------------------------------------------
-	
-	//--------------------------------------------------------------------------------------
+	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 }
 
 void PObject::setLoc(glm::vec3 loc)
@@ -243,7 +224,7 @@ void PObject::bindTerrainBuffers(int wireframe)
 void PObject::loadShaderVariables()
 {
 	this->loadShader(this->groundFromAtmo, "groundFromAtmo");
-	this->loadShader(this->groundFromSpace, "shaderTest");
+	this->loadShader(this->groundFromSpace, this->getName());
 	this->loadEdgeShader();
 }
 
@@ -258,16 +239,18 @@ void PObject::loadShader(Program& shader, string sName)
 	shader.u_PMatrix = glGetUniformLocation(this->sManager->getProgram(sName), "projection");
 	shader.u_VMatrix = glGetUniformLocation(this->sManager->getProgram(sName), "view");
 	shader.u_MMatrix = glGetUniformLocation(this->sManager->getProgram(sName), "model");
-	shader.Kr = glGetUniformLocation(this->sManager->getProgram(sName), "Kr");
+	/*shader.Kr = glGetUniformLocation(this->sManager->getProgram(sName), "Kr");
 	shader.Km = glGetUniformLocation(this->sManager->getProgram(sName), "Km");
 	shader.eSun = glGetUniformLocation(this->sManager->getProgram(sName), "ESun");
 	shader.v3InvWaveLength = glGetUniformLocation(this->sManager->getProgram(sName), "v3InvWaveLength");
 	shader.cameraPos = glGetUniformLocation(this->sManager->getProgram(sName), "cameraPos");
+	*/
 	shader.a_Position = glGetAttribLocation(this->sManager->getProgram(sName), "position");
+	/*
 	shader.a_Color = glGetAttribLocation(this->sManager->getProgram(sName), "color");
 	shader.a_Normal = glGetAttribLocation(this->sManager->getProgram(sName), "normal");
 	shader.nSamples = glGetUniformLocation(this->sManager->getProgram(sName), "nSamples");
-	shader.radius = glGetUniformLocation(this->sManager->getProgram(sName), "fInnerRadius");
+	shader.radius = glGetUniformLocation(this->sManager->getProgram(sName), "fInnerRadius");*/
 }
 
 void PObject::loadEdgeShader()

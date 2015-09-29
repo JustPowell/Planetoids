@@ -22,6 +22,30 @@ Camera::~Camera()
 {
 }
 
+void Camera::init(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
+{
+	this->pos = pos;
+	this->xpos = 1024.f / 2.f;
+	this->ypos = 768.f / 2.f;
+	this->viewMatrix = glm::lookAt(pos, target, up);
+	this->target = glm::vec3(cosf(vangle)*sinf(hangle), sinf(vangle), cos(vangle) * cos(hangle));
+}
+
+void Camera::setPos(const glm::vec3& pos)
+{
+	this->pos = pos;
+}
+
+void Camera::setTarget(const glm::vec3& tar)
+{
+	this->target = tar;
+}
+
+void Camera::setUp(const glm::vec3& up)
+{
+	this->up = up;
+}
+
 void Camera::update()
 {
 	this->target = glm::vec3(cosf(vangle)*sinf(hangle), sinf(vangle), cos(vangle) * cos(hangle));
@@ -159,3 +183,14 @@ float Camera::getSpeed()
 {
 	return this->speed;
 }
+#if !_DEBUG
+void* Camera::operator new(size_t i)
+{
+	return _mm_malloc(i, al);
+}
+
+void Camera::operator delete(void* p)
+{
+	_mm_free(p);
+}
+#endif

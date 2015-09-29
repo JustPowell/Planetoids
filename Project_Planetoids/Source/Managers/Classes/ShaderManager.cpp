@@ -35,6 +35,8 @@ void ShaderManager::createShader(GLuint& shaderProgram, const char* shadertext, 
 
 void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 {
+	GLuint v_obj = -1, f_obj = -1, g_obj = -1, tc_obj = -1, te_obj = -1;
+
 	shaderProgram = glCreateProgram();
 	if (shaderProgram == -1)
 	{
@@ -42,16 +44,45 @@ void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 	}
 
 	ifstream inv("./Source/Shaders/" + shaderName + ".vert");
-	string v((istreambuf_iterator<char>(inv)), istreambuf_iterator<char>());
+	if (inv.is_open())
+	{
+		string v((istreambuf_iterator<char>(inv)), istreambuf_iterator<char>());
+		v_obj = glCreateShader(GL_VERTEX_SHADER);
+		createShader(shaderProgram, v.c_str(), v_obj);
+
+	}
 
 	ifstream inf("./Source/Shaders/" + shaderName + ".frag");
-	string f((istreambuf_iterator<char>(inf)), istreambuf_iterator<char>());
+	if (inf.is_open())
+	{
+		string f((istreambuf_iterator<char>(inf)), istreambuf_iterator<char>());
+		f_obj = glCreateShader(GL_FRAGMENT_SHADER);
+		createShader(shaderProgram, f.c_str(), f_obj);
+	}
 
-	GLuint v_obj = glCreateShader(GL_VERTEX_SHADER);
-	GLuint f_obj = glCreateShader(GL_FRAGMENT_SHADER);
+	ifstream ing("./Source/Shaders/" + shaderName + ".geo");
+	if (ing.is_open())
+	{
+		string g((istreambuf_iterator<char>(ing)), istreambuf_iterator<char>());
+		g_obj = glCreateShader(GL_GEOMETRY_SHADER);
+		createShader(shaderProgram, g.c_str(), g_obj);
+	}
 
-	createShader(shaderProgram, v.c_str(), v_obj);
-	createShader(shaderProgram, f.c_str(), f_obj);
+	ifstream intc("./Source/Shaders/" + shaderName + ".tessc");
+	if (intc.is_open())
+	{
+		string tc((istreambuf_iterator<char>(intc)), istreambuf_iterator<char>());
+		tc_obj = glCreateShader(GL_TESS_CONTROL_SHADER);
+		createShader(shaderProgram, tc.c_str(), tc_obj);
+	}
+
+	ifstream inte("./Source/Shaders/" + shaderName + ".tesse");
+	if (inte.is_open())
+	{
+		string te((istreambuf_iterator<char>(inte)), istreambuf_iterator<char>());
+		te_obj = glCreateShader(GL_TESS_EVALUATION_SHADER);
+		createShader(shaderProgram, te.c_str(), te_obj);
+	}
 
 	GLint success = 0;
 	GLchar errLog[1024] = { 0 };
@@ -71,9 +102,16 @@ void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 		fprintf(stderr, "Invalid shader program: '%s'\n", errLog);
 		//exit(1);
 	}
-
-	glDetachShader(shaderProgram, v_obj);
-	glDetachShader(shaderProgram, f_obj);
+	if (v_obj != -1)
+		glDetachShader(shaderProgram, v_obj);
+	if (f_obj != -1)
+		glDetachShader(shaderProgram, f_obj);
+	if (g_obj != -1)
+		glDetachShader(shaderProgram, g_obj);
+	if (tc_obj != -1)
+		glDetachShader(shaderProgram, tc_obj);
+	if (te_obj != -1)
+		glDetachShader(shaderProgram, te_obj);
 }
 
 void ShaderManager::reloadShader(string program)

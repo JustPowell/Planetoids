@@ -1,14 +1,29 @@
 #pragma once
 #include "../Headers/Planetoids.h"
+#define al 16
 
+#if !_DEBUG
+__declspec(align(al)) class Camera
+#else
 class Camera
+#endif
 {
 public:
 	Camera();
 	Camera(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up);
 	~Camera();
 
+	void init(const glm::vec3& pos, const glm::vec3& tar, const glm::vec3& up);
 	void update();
+	void setPos(const glm::vec3& pos);
+	void setTarget(const glm::vec3& tar);
+	void setUp(const glm::vec3& up);
+
+#if !_DEBUG
+	void* operator new(size_t i);
+	void operator delete(void *p);
+#endif
+
 	glm::vec3 getPos();
 	glm::vec3 getTarget();
 	glm::vec3 getUp();

@@ -21,16 +21,6 @@ GLfloat r = 10.f;
 
 int canmove = 0;
 
-/*GLfloat sqr[16] = { -10, 10, 10,
-					 10, 10, 10,
-					 10,-10, 10,
-				    -10,-10, 10};
-
-GLuint vbuffer;
-GLuint u_PMatrix = 0, u_VMatrix = 0, u_MMatrix = 0;
-GLuint a_position = 0;
-GLuint program;*/
-
 static void error_callback(int error, const char* description)
 {
 	fputs(description, stderr);
@@ -109,24 +99,11 @@ void init(GLFWwindow* window)
 {
 	sManager = new ShaderManager();
 
-	//sManager->createProgram("tess");
-	
-
 	int r = 5.f;
 	glm::vec3 pos(0.f, 0.f, -r*2);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
-
-	//u_PMatrix = glGetUniformLocation(sManager->getProgram("tess"), "projection");
-	//u_MMatrix = glGetUniformLocation(sManager->getProgram("tess"), "model");
-	//u_VMatrix = glGetUniformLocation(sManager->getProgram("tess"), "view");
-	//a_position = glGetAttribLocation(sManager->getProgram("tess"), "position");
-
-	//glGenBuffers(1, &vbuffer);
-	//glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(float)* 16, sqr, GL_DYNAMIC_DRAW_ARB);
-	
 
 	planetObj = new PObject("tess", r, sManager);
 	//star = new Star("starShader", 272.0f, sManager);
@@ -154,25 +131,7 @@ void draw(GLFWwindow* window)
 	//star->draw(camera);
 	planetObj->draw(camera);
 	//planetObj->getSky().draw(camera);
-	/*glUseProgram(sManager->getProgram("tess"));
-	
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbuffer);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableVertexAttribArray(a_position);
-	glVertexAttribPointer(a_position, 3, GL_FLOAT, false, 0, 0);
-	glVertexPointer(4, GL_FLOAT, 0, (char *)0);
-	
-	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
-	glUniformMatrix4fv(u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
-	glUniformMatrix4fv(u_PMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawArrays(GL_QUADS, 0, 4);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);*/
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }

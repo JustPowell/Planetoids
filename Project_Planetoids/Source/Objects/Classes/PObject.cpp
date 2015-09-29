@@ -1,12 +1,15 @@
 #include "../Headers/PObject.h"
+PObject::PObject()
+{
 
+}
 
 PObject::PObject(string name, GLfloat radius, ShaderManager* sManager)
 {
 	this->sManager = sManager;
 	this->setName(name);
 	this->setRadius(radius);
-	this->mesh = PlanetMesh(radius, 0, 0);
+	this->mesh = PlanetMesh(radius, 2, 0);
 	
 	this->modelMatrix = glm::mat4(1.0f);
 	this->setLoc(glm::vec3(0.f, 0.f, 0.f));
@@ -24,6 +27,11 @@ PObject::PObject(string name, GLfloat radius, ShaderManager* sManager)
 
 PObject::~PObject()
 {
+}
+
+void PObject::init(string name, GLfloat radius, ShaderManager* sManager)
+{
+
 }
 
 void PObject::setName(string name)
@@ -84,7 +92,7 @@ void PObject::changeLambda(int key, int action, int mods)
 
 void PObject::update()
 {
-	this->cHeight = ((glm::length(this->cameraPos) - glm::length(this->loc)) - 10.f) / (10.f * 1.025 - 10.f);
+	this->cHeight = ((glm::length(this->cameraPos) - glm::length(this->loc)) - 10.f) / (10.f * 1.025f - 10.f);
 	if (this->cHeight > 1.0)
 	{
 		this->cp = this->groundFromSpace;
@@ -122,7 +130,10 @@ void PObject::draw(Camera* camera)
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	glPatchParameteri(GL_PATCH_VERTICES, 4);
+	glDrawElements(GL_PATCHES, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+
+	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 
 
 	//--------------------------------------------------------------------------------------
@@ -261,3 +272,15 @@ void PObject::loadEdgeShader()
 	this->edgeShader.u_MMatrix = glGetUniformLocation(this->sManager->getProgram("edgeShader"), "model");
 	this->edgeShader.a_Position = glGetAttribLocation(this->sManager->getProgram("edgeShader"), "position");
 }
+
+#if !_DEBUG
+void* PObject::operator new(size_t i)
+{
+	return _mm_malloc(i, al);
+}
+
+void PObject::operator delete(void* p)
+{
+	_mm_free(p);
+}
+#endif

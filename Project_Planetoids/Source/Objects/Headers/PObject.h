@@ -3,15 +3,22 @@
 #include "../../Mesh/Headers/PlanetMesh.h"
 #include "../../Objects/Headers/Sky.h"
 #include "../../Managers/Headers/ShaderManager.h"
+#define al 16
 
 extern GLuint atmoProgram, edgeProgram, terrainProgram;
 
+#if !_DEBUG
+__declspec(align(al)) class PObject
+#else
 class PObject
+#endif
 {
 public:
+	PObject();
 	PObject(string name, GLfloat radius, ShaderManager* sManager);
 	~PObject();
 
+	void init(string name, GLfloat radius, ShaderManager* sManager);
 	void setName(string name);
 	void setRadius(GLfloat radius);
 	void update();
@@ -19,6 +26,11 @@ public:
 	void setLoc(glm::vec3 loc);
 	void setModelMatrix(const glm::mat4& modelMatrix);
 	void changeLambda(int key, int action, int mods);
+
+#if !_DEBUG
+	void* operator new(size_t i);
+	void operator delete(void *p);
+#endif
 
 	string		getName();
 	GLfloat		getRadius();

@@ -348,9 +348,9 @@ void PlanetMesh::toSphere()
 		else
 			randn = 0;
 
-		newloc.x = (this->radius + randn) * sin(theta) * cos(phi);
-		newloc.y = (this->radius + randn) * sin(theta) * sin(phi);
-		newloc.z = (this->radius + randn) * cos(theta);
+		newloc.x = (this->radius + (float)randn) * sin(theta) * cos(phi);
+		newloc.y = (this->radius + (float)randn) * sin(theta) * sin(phi);
+		newloc.z = (this->radius + (float)randn) * cos(theta);
 
 		this->l_vertices[i]->setLocation(newloc);
 	}

@@ -76,7 +76,7 @@ int main(void)
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
-	GLFWwindow* window = glfwCreateWindow(width, height, "Planetoids", glfwGetPrimaryMonitor(), NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Planetoids", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();

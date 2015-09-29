@@ -20,7 +20,7 @@ Sky::Sky(GLfloat radius, ShaderManager* sManager, glm::vec3 loc = glm::vec3(0, 0
 	this->setRadius(radius);
 	this->setLoc(loc);
 	this->atmoMesh = PlanetMesh(this->radius, 3, 0, 1);
-	this->spaceMesh = PlanetMesh(this->radius, 8, 0);
+	this->spaceMesh = PlanetMesh(this->radius, 5, 0);
 	this->modelMatrix = glm::mat4(1.0f);
 
 	sManager->createProgram("atmoShader2");

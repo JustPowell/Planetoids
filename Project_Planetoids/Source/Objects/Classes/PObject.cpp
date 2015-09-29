@@ -130,10 +130,10 @@ void PObject::draw(Camera* camera)
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	glPatchParameteri(GL_PATCH_VERTICES, 4);
-	glDrawElements(GL_PATCHES, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	//glPatchParameteri(GL_PATCH_VERTICES, 4);
+	//glDrawElements(GL_PATCHES, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 
-	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 
 
 	//--------------------------------------------------------------------------------------

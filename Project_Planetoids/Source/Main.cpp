@@ -105,7 +105,7 @@ void init(GLFWwindow* window)
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
 
-	planetObj = new PObject("tess", r, sManager);
+	planetObj = new PObject("shaderTest", r, sManager);
 	//star = new Star("starShader", 272.0f, sManager);
 	//star->setLoc(glm::vec3(4776.f, 0, 0));
 

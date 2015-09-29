@@ -14,8 +14,8 @@ out TCS_OUT
 
 void main()
 {
-	float t = 2.0;
-	float i = 1.0;
+	float t = 4.0;
+	float i = 4.0;
 	gl_TessLevelOuter[0] = t;
 	gl_TessLevelOuter[1] = t;
 	gl_TessLevelOuter[2] = t;

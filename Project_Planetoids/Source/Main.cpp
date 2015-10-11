@@ -91,8 +91,10 @@ int main(void)
 	//int* blah = new int(3);
 	//char* b = (char*)malloc(20);
 	init(window);
+	
 	while (!glfwWindowShouldClose(window))
 	{
+		
 		//draw(window, shaderProgram2, 1);
 		//draw(window, shaderProgram, 0);
 		camera->update();

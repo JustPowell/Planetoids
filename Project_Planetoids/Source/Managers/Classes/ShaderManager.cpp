@@ -60,14 +60,6 @@ void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 		createShader(shaderProgram, f.c_str(), f_obj);
 	}
 
-	ifstream ing("./Source/Shaders/" + shaderName + ".geo");
-	if (ing.is_open())
-	{
-		string g((istreambuf_iterator<char>(ing)), istreambuf_iterator<char>());
-		g_obj = glCreateShader(GL_GEOMETRY_SHADER);
-		createShader(shaderProgram, g.c_str(), g_obj);
-	}
-
 	ifstream intc("./Source/Shaders/" + shaderName + ".tessc");
 	if (intc.is_open())
 	{
@@ -82,6 +74,14 @@ void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 		string te((istreambuf_iterator<char>(inte)), istreambuf_iterator<char>());
 		te_obj = glCreateShader(GL_TESS_EVALUATION_SHADER);
 		createShader(shaderProgram, te.c_str(), te_obj);
+	}
+
+	ifstream ing("./Source/Shaders/" + shaderName + ".geo");
+	if (ing.is_open())
+	{
+		string g((istreambuf_iterator<char>(ing)), istreambuf_iterator<char>());
+		g_obj = glCreateShader(GL_GEOMETRY_SHADER);
+		createShader(shaderProgram, g.c_str(), g_obj);
 	}
 
 	GLint success = 0;
@@ -104,14 +104,14 @@ void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 	}
 	if (v_obj != -1)
 		glDetachShader(shaderProgram, v_obj);
-	if (f_obj != -1)
-		glDetachShader(shaderProgram, f_obj);
-	if (g_obj != -1)
-		glDetachShader(shaderProgram, g_obj);
 	if (tc_obj != -1)
 		glDetachShader(shaderProgram, tc_obj);
 	if (te_obj != -1)
 		glDetachShader(shaderProgram, te_obj);
+	if (g_obj != -1)
+		glDetachShader(shaderProgram, g_obj);
+	if (f_obj != -1)
+		glDetachShader(shaderProgram, f_obj);
 }
 
 void ShaderManager::reloadShader(string program)

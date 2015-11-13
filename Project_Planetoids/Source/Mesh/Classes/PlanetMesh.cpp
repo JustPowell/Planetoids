@@ -37,6 +37,7 @@ void PlanetMesh::buildPlanet(int atmo)
 		this->initAtmoCube();
 	else
 		this->subdivide(this->sublvl);
+	this->genPlates();
 	this->toSphere();
 }
 
@@ -243,6 +244,11 @@ void PlanetMesh::subdivide(int sublvl)
 
 	for (int i = 0; i < sublvl; i++)
 	{
+		for (size_t i = 0; i < this->num_v; i++)
+		{
+			this->l_vertices[i]->rstHeight();
+		}
+
 		oldFaces.insert(oldFaces.end(), this->l_faces.begin(), this->l_faces.end());
 		oldEdges.insert(oldEdges.end(), this->l_edges.begin(), this->l_edges.end());
 		this->m_edges.clear();
@@ -273,6 +279,18 @@ void PlanetMesh::subdivide(int sublvl)
 			Face *f1 = new Face(newVertl[0], face->getVertices()[1], newVertl[1], newVertl[4]);
 			Face *f2 = new Face(newVertl[3], newVertl[4], newVertl[2], face->getVertices()[3]);
 			Face *f3 = new Face(newVertl[4], newVertl[1], face->getVertices()[2], newVertl[2]);
+			
+			//f0->setpNum(rand() % 3);
+			//f1->setpNum(rand() % 3);
+			//f2->setpNum(rand() % 3);
+			//f3->setpNum(rand() % 3);
+			/*
+				This is for changing the base mesh during generation.
+			*/
+			//f0->setHeight((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) * ((rand() % 2) * 2 - 1));
+			//f1->setHeight((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) * ((rand() % 2) * 2 - 1));
+			//f2->setHeight((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) * ((rand() % 2) * 2 - 1));
+			//f3->setHeight((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) * ((rand() % 2) * 2 - 1));
 
 			this->addF(f0);
 			this->addEdges(f0);
@@ -332,6 +350,9 @@ void PlanetMesh::toSphere()
 		count++;
 		count2++;
 		vector3f newloc;
+		
+		//this->l_vertices[i]->avgHeight(); //When changing the base mesh.
+		
 		vector3f loc = this->l_vertices[i]->getLocation();
 
 		GLfloat theta, phi;
@@ -348,11 +369,58 @@ void PlanetMesh::toSphere()
 		else
 			randn = 0;
 
-		newloc.x = (this->radius + (float)randn) * sin(theta) * cos(phi);
-		newloc.y = (this->radius + (float)randn) * sin(theta) * sin(phi);
-		newloc.z = (this->radius + (float)randn) * cos(theta);
+		newloc.x = (this->radius /*+ this->l_vertices[i]->getHeight()*/) * sin(theta) * cos(phi);
+		newloc.y = (this->radius /*+ this->l_vertices[i]->getHeight()*/) * sin(theta) * sin(phi);
+		newloc.z = (this->radius /*+ this->l_vertices[i]->getHeight()*/) * cos(theta);
 
 		this->l_vertices[i]->setLocation(newloc);
 	}
 	this->updateLocations();
+}
+
+void PlanetMesh::genPlates()
+{
+	int numP = 9;
+	int sizeF = this->l_faces.size();
+	f_map assignFaces;
+
+	for (int i = 0; i < numP; i++)
+	{
+		vector<Face*>* p = new vector<Face*>();
+		int f = rand() % sizeF;
+
+		while (!get<1>(assignFaces.emplace(this->l_faces[f], 1)))
+		{
+			f = rand() & sizeF;
+		}
+
+		p->push_back(this->l_faces[f]);
+		p->at(0)->setpNum(i);
+		this->platesList.push_back(p);
+	}
+	this->assignPlates();
+	this->updateColors();
+}
+
+void PlanetMesh::assignPlates()
+{
+	int numP = 9;
+	int sizeF = this->l_faces.size();
+	edge_l edges;
+	face_l faces;
+	for (int i = 0; i < numP; i++)
+	{
+		edges = this->platesList.at(i)->at(0)->getEdges();
+		for (int j = 0; j < 4; j++)
+		{
+			faces = edges[j]->getAdjFaces();
+			if (faces[0]->getpNum() != -1)
+			{
+				faces[0]->setpNum(faces[1]->getpNum());
+			}
+			else{
+				faces[1]->setpNum(faces[0]->getpNum());
+			}
+		}	
+	}
 }

@@ -22,7 +22,6 @@ float fOuterRadius2 = pow(fOuterRadius, 2);
 
 float fKrESun = Kr * ESun;
 float fKmESun = Km * ESun;
-
 float fKr4PI = Kr * 4 * PI;
 float fKm4pi = Km * 4 * PI;
 

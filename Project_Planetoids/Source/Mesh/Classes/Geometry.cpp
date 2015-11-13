@@ -9,7 +9,7 @@ Vertex::Vertex(vector3f loc)
 {
 	this->loc = loc;
 	this->nor = glm::vec3(0.f, 0.f, 0.f);
-	this->col = glm::vec3((float)(rand() % 255) / 255, (float)(rand() % 255) / 255, (float)(rand() % 255) / 255);
+	//this->col = glm::vec3((float)(rand() % 255) / 255, (float)(rand() % 255) / 255, (float)(rand() % 255) / 255);
 	//this->col = glm::vec3(1.0f);
 	//get<0>(this->col) = (float)(rand() % 255) / 255;
 	//get<1>(this->col) = (float)(rand() % 255) / 255;
@@ -52,6 +52,30 @@ void Vertex::addAdjFace(Face* f)
 	this->adj_f.push_back(f);
 }
 
+void Vertex::setHeight(GLfloat h)
+{
+	this->height = h;
+}
+
+void Vertex::addHeight(GLfloat h)
+{
+	this->height += h;
+}
+
+void Vertex::avgHeight()
+{
+	this->height /= 4.f;
+}
+
+void Vertex::rstHeight()
+{
+	this->height = 0.f;
+}
+
+void Vertex::avgColor()
+{
+	this->col /= 4;
+}
 vector3f Vertex::getLocation() const
 {
 	return this->loc;
@@ -75,6 +99,11 @@ edge_l Vertex::getAdjEdges() const
 face_l Vertex::getAdjFaces() const
 {
 	return this->adj_f;
+}
+
+GLfloat Vertex::getHeight()
+{
+	return this->height;
 }
 
 //Edge Class
@@ -175,6 +204,7 @@ void Face::setVertices(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
 	v1->addAdjFace(this);
 	v2->addAdjFace(this);
 	v3->addAdjFace(this);
+
 }
 
 void Face::addEdge(Edge* e)
@@ -206,4 +236,62 @@ void Face::setNormal(glm::vec3& norm)
 normal3f Face::getNormal()
 {
 	return this->f_normal;
+}
+
+void Face::setHeight(GLfloat h)
+{
+	this->height = h;
+	this->vertexList[0]->addHeight(this->height);
+	this->vertexList[1]->addHeight(this->height);
+	this->vertexList[2]->addHeight(this->height);
+	this->vertexList[3]->addHeight(this->height);
+}
+
+GLfloat Face::getHeight()
+{
+	return this->height;
+}
+
+void Face::setpNum(int n)
+{
+	this->pNum = n;
+	color3f vc;
+	switch (n){
+	case 0:
+		vc = color3f(0.f, 0.f, 1.f);
+		break;
+	case 1:
+		vc = color3f(1.f, 0.f, 0.f);
+		break;
+	case 2:
+		vc = color3f(0.f, 1.f, 0.f);
+		break;
+	case 3:
+		vc = color3f(1.f, 1.f, 0.f);
+		break;
+	case 4:
+		vc = color3f(0.f, 1.f, 1.f);
+		break;
+	case 5:
+		vc = color3f(1.f, 0.f, 1.f);
+		break;
+	case 6:
+		vc = color3f(1.f, 1.f, 1.f);
+		break;
+	case 7:
+		vc = color3f(0.5f, 1.f, 0.f);
+		break;
+	case 8:
+		vc = color3f(0.f, 1.f, 0.5f);
+		break;
+	}
+	this->vertexList[0]->setColor(vc);
+	this->vertexList[1]->setColor(vc);
+	this->vertexList[2]->setColor(vc);
+	this->vertexList[3]->setColor(vc);
+}
+
+int Face::getpNum()
+{
+	return this->pNum;
 }

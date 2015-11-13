@@ -196,6 +196,15 @@ void Mesh::updateIndex()
 	}
 }
 
+void Mesh::updateColors()
+{
+	this->l_colors.clear();
+	for (size_t i = 0; i < this->l_vertices.size(); i++)
+	{
+		this->storeColor(this->l_vertices[i]);
+	}
+}
+
 void Mesh::calcNormals()
 {
 	

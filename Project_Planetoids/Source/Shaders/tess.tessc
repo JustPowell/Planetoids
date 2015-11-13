@@ -5,17 +5,49 @@ layout(vertices = 4) out;
 in VS_OUT
 {
 	vec4 color;
+	vec4 position;
+	vec3 camPos;
 } tcs_in[];
 
 out TCS_OUT
 {
 	vec4 color;
+	vec4 position;
 } tcs_out[];
 
 void main()
 {
-	float t = 2.0;
-	float i = 1.0;
+	float t, i;
+	float dist = length(tcs_in[gl_InvocationID].position.xyz - tcs_in[gl_InvocationID].camPos);
+	if(dist > 30){
+		t = 1.0;
+		i = 1.0;
+	}
+	else if(dist > 20){
+		t = 2.0;
+		i = 1.0;
+	}
+	else if(dist > 10){
+		t = 4.0;
+		i = 4.0;
+	}
+	else if(dist > 5){
+		t = 8.0;
+		i = 8.0;
+	}
+	else if(dist > 2.5){
+		t = 16.0;
+		i = 16.0;
+	}
+	else if(dist > 1.5){
+		t = 32.0;
+		i = 32.0;
+	}
+	else{
+		t = 64.0;
+		i = 64.0;
+	}
+	
 	gl_TessLevelOuter[0] = t;
 	gl_TessLevelOuter[1] = t;
 	gl_TessLevelOuter[2] = t;

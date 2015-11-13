@@ -43,4 +43,6 @@ typedef glm::vec3 normal3f;
 const int width = 1440;
 const int height = 900;
 
+const static int tess = 1;
+
 static glm::mat4 proj = glm::perspective(30.0f, (float)width / (float)height, 0.001f, 10000.f);

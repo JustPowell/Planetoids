@@ -39,5 +39,5 @@ void main()
 		
 	tes_out.color = tes_in[0].color;//(gl_TessCoord.x * tes_in[0].color + 
 					 //gl_TessCoord.y * tes_in[1].color +
-					// gl_TessCoord.z * tes_in[2].color);
+					 //gl_TessCoord.z * tes_in[2].color);
 }

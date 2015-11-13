@@ -114,6 +114,11 @@
     <None Include="Source\Shaders\groundFromAtmo.vert" />
     <None Include="Source\Shaders\starShader.frag" />
     <None Include="Source\Shaders\starShader.vert" />
+    <None Include="Source\Shaders\tess.frag" />
+    <None Include="Source\Shaders\tess.geo" />
+    <None Include="Source\Shaders\tess.tessc" />
+    <None Include="Source\Shaders\tess.tesse" />
+    <None Include="Source\Shaders\tess.vert" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project_Planetoids.rc">

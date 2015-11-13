@@ -4,12 +4,12 @@ PObject::PObject()
 
 }
 
-PObject::PObject(string name, GLfloat radius, ShaderManager* sManager)
+PObject::PObject(string name, GLfloat radius, int tesslvl, ShaderManager* sManager)
 {
 	this->sManager = sManager;
 	this->setName(name);
 	this->setRadius(radius);
-	this->mesh = PlanetMesh(radius, 2, 0);
+	this->mesh = PlanetMesh(radius, tesslvl, 0);
 	
 	this->modelMatrix = glm::mat4(1.0f);
 	this->setLoc(glm::vec3(0.f, 0.f, 0.f));
@@ -118,9 +118,9 @@ void PObject::draw(Camera* camera)
 	glUniformMatrix4fv(this->cp.u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
 	glUniformMatrix4fv(this->cp.u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(this->cp.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
-	/*
+	
 	glUniform3fv(this->cp.cameraPos, 1, glm::value_ptr(camera->getPos()));
-	glUniform1f(this->cp.Kr, this->sManager->Kr);
+	/*glUniform1f(this->cp.Kr, this->sManager->Kr);
 	glUniform1f(this->cp.Km, this->sManager->Km);
 	glUniform1f(this->cp.eSun, this->sManager->eSun);
 	glUniform3fv(this->cp.v3InvWaveLength, 1, glm::value_ptr(glm::vec3(1 / pow(this->sManager->v3InvWaveLength.r, 4), 1 / pow(this->sManager->v3InvWaveLength.g, 4), 1 / pow(this->sManager->v3InvWaveLength.b, 4))));
@@ -130,10 +130,13 @@ void PObject::draw(Camera* camera)
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	//glPatchParameteri(GL_PATCH_VERTICES, 4);
-	//glDrawElements(GL_PATCHES, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
-
-	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	if (tess)
+	{
+		glPatchParameteri(GL_PATCH_VERTICES, 4);
+		glDrawElements(GL_PATCHES, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	}
+	else
+		glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 
 
 	//--------------------------------------------------------------------------------------
@@ -254,12 +257,13 @@ void PObject::loadShader(Program& shader, string sName)
 	shader.Km = glGetUniformLocation(this->sManager->getProgram(sName), "Km");
 	shader.eSun = glGetUniformLocation(this->sManager->getProgram(sName), "ESun");
 	shader.v3InvWaveLength = glGetUniformLocation(this->sManager->getProgram(sName), "v3InvWaveLength");
-	shader.cameraPos = glGetUniformLocation(this->sManager->getProgram(sName), "cameraPos");
 	*/
+	shader.cameraPos = glGetUniformLocation(this->sManager->getProgram(sName), "cameraPos");
+	
 	shader.a_Position = glGetAttribLocation(this->sManager->getProgram(sName), "position");
-	/*
+	
 	shader.a_Color = glGetAttribLocation(this->sManager->getProgram(sName), "color");
-	shader.a_Normal = glGetAttribLocation(this->sManager->getProgram(sName), "normal");
+	/*shader.a_Normal = glGetAttribLocation(this->sManager->getProgram(sName), "normal");
 	shader.nSamples = glGetUniformLocation(this->sManager->getProgram(sName), "nSamples");
 	shader.radius = glGetUniformLocation(this->sManager->getProgram(sName), "fInnerRadius");*/
 }

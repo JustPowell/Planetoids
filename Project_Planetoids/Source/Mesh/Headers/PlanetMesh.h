@@ -36,12 +36,15 @@ private:
 	int random;
 	vector<side*> cubeside;
 	GLfloat radius;
+	vector<vector<Face*>*> platesList;
 
 	vertex_l calcNewVerts(unordered_map<Edge*, Vertex*>& newVerts, Face *face);
 	void initVertices(int sublvl);
 	void initCube(int atmo);
 	void initAtmoCube();
 	void toSphere();
+	void genPlates();
+	void assignPlates();
 
 	void addFace();
 };

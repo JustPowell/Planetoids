@@ -23,14 +23,22 @@ public:
 	void setColor(color3f col);
 	void addAdjEdge(Edge* e);
 	void addAdjFace(Face* f);
+	void addHeight(GLfloat h);
+	void setHeight(GLfloat h);
+	void avgHeight();
+	void rstHeight();
+	void avgColor();
 
 	vector3f getLocation() const;
 	normal3f getNormal() const;
 	color3f  getColor() const;
 	edge_l   getAdjEdges() const;
 	face_l   getAdjFaces() const;
+	GLfloat  getHeight();
+	
 
 private:
+	GLfloat height = 0.f;
 	vector3f loc;
 	normal3f nor;
 	color3f col;
@@ -73,14 +81,21 @@ public:
 	edge_l   getEdges();
 	vector3f getCentroid();
 	color3f  getColor() const;
+	void	 setHeight(GLfloat h);
+	GLfloat  getHeight();
 
 	void setNormal(glm::vec3& norm);
 	normal3f getNormal();
+	int		 getpNum();
+	void	 setpNum(int n);
 
 private:
+	GLfloat height = 0.f;
 	vertex_l vertexList;
 	edge_l	 edgeList;
 	color3f  color;
+	int pNum = -1;
+	
 
 	normal3f f_normal;
 };

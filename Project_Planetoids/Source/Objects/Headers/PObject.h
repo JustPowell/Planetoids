@@ -15,7 +15,7 @@ class PObject
 {
 public:
 	PObject();
-	PObject(string name, GLfloat radius, ShaderManager* sManager);
+	PObject(string name, GLfloat radius, int tesslvl, ShaderManager* sManager);
 	~PObject();
 
 	void init(string name, GLfloat radius, ShaderManager* sManager);

@@ -3,6 +3,7 @@
 #include "./Objects/Headers/PObject.h"
 #include "./Managers/Headers/ShaderManager.h"
 #include "./Objects/Headers/Star.h"
+#include <time.h>
 
 #define SUB_LVL 0
 #define planet 0
@@ -97,15 +98,20 @@ int main(void)
 
 void init(GLFWwindow* window)
 {
+	srand(time(NULL));
+
 	sManager = new ShaderManager();
 
-	int r = 5.f;
+	int r = 50.f;
 	glm::vec3 pos(0.f, 0.f, -r*2);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	camera = new Camera(pos, tar, up);
 
-	planetObj = new PObject("shaderTest", r, sManager);
+	if (tess)
+		planetObj = new PObject("tess", r, 4, sManager);
+	else
+		planetObj = new PObject("shadertest", r, 4, sManager);
 	//star = new Star("starShader", 272.0f, sManager);
 	//star->setLoc(glm::vec3(4776.f, 0, 0));
 

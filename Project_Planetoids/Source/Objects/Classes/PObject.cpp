@@ -9,7 +9,7 @@ PObject::PObject(string name, GLfloat radius, int tesslvl, ShaderManager* sManag
 	this->sManager = sManager;
 	this->setName(name);
 	this->setRadius(radius);
-	this->mesh = PlanetMesh(radius, tesslvl, 0);
+	this->mesh = PlanetMesh(radius, tesslvl, 0, 0);
 	
 	this->modelMatrix = glm::mat4(1.0f);
 	this->setLoc(glm::vec3(0.f, 0.f, 0.f));
@@ -129,7 +129,6 @@ void PObject::draw(Camera* camera)
 	*/
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 	if (tess)
 	{
 		glPatchParameteri(GL_PATCH_VERTICES, 4);
@@ -156,7 +155,7 @@ void PObject::draw(Camera* camera)
 void PObject::setLoc(glm::vec3 loc)
 {
 	this->loc = loc;
-	this->sky.setLoc(loc);
+	//this->sky.setLoc(loc);
 }
 
 void PObject::setModelMatrix(const glm::mat4& modelMatrix)
@@ -186,7 +185,7 @@ glm::vec3 PObject::getLoc()
 
 Sky& PObject::getSky()
 {
-	return this->sky;
+	return Sky();// this->sky;
 }
 
 void PObject::bufferTerrainObjects()

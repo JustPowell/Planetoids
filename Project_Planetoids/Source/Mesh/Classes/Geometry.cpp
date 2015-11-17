@@ -185,6 +185,7 @@ face_l Edge::getAdjFaces()
 Face::Face(Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3)
 {
 	this->setVertices(v0, v1, v2, v3);
+	this->pNum = -1;
 	//get<0>(this->color) = (float)(rand() % 255) / 255;
 	//get<1>(this->color) = (float)(rand() % 255) / 255;
 	//get<2>(this->color) = (float)(rand() % 255) / 255;

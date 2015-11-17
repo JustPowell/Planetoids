@@ -49,15 +49,6 @@ void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 		string v((istreambuf_iterator<char>(inv)), istreambuf_iterator<char>());
 		v_obj = glCreateShader(GL_VERTEX_SHADER);
 		createShader(shaderProgram, v.c_str(), v_obj);
-
-	}
-
-	ifstream inf("./Source/Shaders/" + shaderName + ".frag");
-	if (inf.is_open())
-	{
-		string f((istreambuf_iterator<char>(inf)), istreambuf_iterator<char>());
-		f_obj = glCreateShader(GL_FRAGMENT_SHADER);
-		createShader(shaderProgram, f.c_str(), f_obj);
 	}
 
 	ifstream intc("./Source/Shaders/" + shaderName + ".tessc");
@@ -82,6 +73,14 @@ void ShaderManager::loadShader(GLuint& shaderProgram, string shaderName)
 		string g((istreambuf_iterator<char>(ing)), istreambuf_iterator<char>());
 		g_obj = glCreateShader(GL_GEOMETRY_SHADER);
 		createShader(shaderProgram, g.c_str(), g_obj);
+	}
+
+	ifstream inf("./Source/Shaders/" + shaderName + ".frag");
+	if (inf.is_open())
+	{
+		string f((istreambuf_iterator<char>(inf)), istreambuf_iterator<char>());
+		f_obj = glCreateShader(GL_FRAGMENT_SHADER);
+		createShader(shaderProgram, f.c_str(), f_obj);
 	}
 
 	GLint success = 0;

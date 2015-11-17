@@ -398,29 +398,71 @@ void PlanetMesh::genPlates()
 		p->at(0)->setpNum(i);
 		this->platesList.push_back(p);
 	}
-	this->assignPlates();
+
+	
+	this->assignPlates(assignFaces);
 	this->updateColors();
 }
 
-void PlanetMesh::assignPlates()
+void PlanetMesh::assignPlates(f_map& assignFaces)
 {
 	int numP = 9;
 	int sizeF = this->l_faces.size();
 	edge_l edges;
 	face_l faces;
-	for (int i = 0; i < numP; i++)
+	
+	while (assignFaces.size() < sizeF)
 	{
-		edges = this->platesList.at(i)->at(0)->getEdges();
-		for (int j = 0; j < 4; j++)
+		for (int i = 0; i < numP; i++)
 		{
-			faces = edges[j]->getAdjFaces();
-			if (faces[0]->getpNum() != -1)
+			if (this->platesList.at(i)->size() != 0)
 			{
-				faces[0]->setpNum(faces[1]->getpNum());
+				int r = (rand() % this->platesList.at(i)->size());
+				Face* f = this->platesList.at(i)->at(r);
+				while (this->checkFace(f))
+				{
+					this->platesList[i]->erase(this->platesList[i]->begin() + (r));
+					break;
+					r = (rand() % this->platesList.at(i)->size());
+					f = this->platesList.at(i)->at(rand() % this->platesList.at(i)->size());
+				}
+
+				edges = f->getEdges();
+
+				faces = edges[rand() % 4]->getAdjFaces();
+
+				if (get<1>(assignFaces.emplace(faces[0], 1)))
+				{
+					if (faces[0]->getpNum() == -1){
+						faces[0]->setpNum(faces[1]->getpNum());
+						platesList.at(i)->push_back(faces[0]);
+					}
+				}
+				else
+				{
+					if (faces[1]->getpNum() == -1)
+					{
+						assignFaces.emplace(faces[1], 1);
+						faces[1]->setpNum(faces[0]->getpNum());
+						platesList.at(i)->push_back(faces[1]);
+					}
+				}
 			}
-			else{
-				faces[1]->setpNum(faces[0]->getpNum());
-			}
-		}	
+		}
 	}
+}
+
+int PlanetMesh::checkFace(Face* f)
+{
+	int full = 1;
+	edge_l edges = f->getEdges();
+	for (int i = 0; i < 4; i++)
+	{
+		face_l faces = edges[i]->getAdjFaces();
+		if (faces[0]->getpNum() < 0 || faces[1]->getpNum() < 0)
+		{
+			full = 0;
+		}
+	}
+	return full;
 }

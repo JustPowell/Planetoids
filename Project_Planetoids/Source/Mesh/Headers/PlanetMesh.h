@@ -44,7 +44,8 @@ private:
 	void initAtmoCube();
 	void toSphere();
 	void genPlates();
-	void assignPlates();
+	void assignPlates(f_map& assignFaces);
+	int checkFace(Face* f);
 
 	void addFace();
 };

@@ -56,6 +56,7 @@ protected:
 	void updateLocations();
 	void updateIndex();
 	void updateColors();
+	void updateNormals();
 	void calcNormals();
 	void calcFaceNormal(Face* f);
 

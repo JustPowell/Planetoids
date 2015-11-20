@@ -205,6 +205,16 @@ void Mesh::updateColors()
 	}
 }
 
+void Mesh::updateNormals()
+{
+	this->l_normals.clear();
+	for (size_t i = 0; i < this->l_vertices.size(); i++)
+	{
+		this->storeNormals(this->l_vertices[i]);
+	}
+
+}
+
 void Mesh::calcNormals()
 {
 	

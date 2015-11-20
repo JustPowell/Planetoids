@@ -6,13 +6,17 @@ in VS_OUT
 {
 	vec4 color;
 	vec4 position;
+	vec3 normal;
 	vec3 camPos;
+	float noise;
 } tcs_in[];
 
 out TCS_OUT
 {
 	vec4 color;
 	vec4 position;
+	vec3 normal;
+	float noise;
 } tcs_out[];
 
 patch out vec4 pcolor;
@@ -60,5 +64,7 @@ void main()
 	
 	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 	tcs_out[gl_InvocationID].color = tcs_in[gl_InvocationID].color;
+	tcs_out[gl_InvocationID].normal = tcs_in[gl_InvocationID].normal;
+	tcs_out[gl_InvocationID].noise = tcs_in[gl_InvocationID].noise;
 	//pcolor = tcs_in[gl_InvocationID].color;
 }

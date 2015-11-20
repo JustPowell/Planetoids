@@ -149,7 +149,7 @@ void PObject::draw(Camera* camera)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDepthRange(0.0, 0.99999);
 
-	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 }
 
 void PObject::setLoc(glm::vec3 loc)
@@ -262,8 +262,8 @@ void PObject::loadShader(Program& shader, string sName)
 	shader.a_Position = glGetAttribLocation(this->sManager->getProgram(sName), "position");
 	
 	shader.a_Color = glGetAttribLocation(this->sManager->getProgram(sName), "color");
-	/*shader.a_Normal = glGetAttribLocation(this->sManager->getProgram(sName), "normal");
-	shader.nSamples = glGetUniformLocation(this->sManager->getProgram(sName), "nSamples");
+	shader.a_Normal = glGetAttribLocation(this->sManager->getProgram(sName), "normal");
+	/*shader.nSamples = glGetUniformLocation(this->sManager->getProgram(sName), "nSamples");
 	shader.radius = glGetUniformLocation(this->sManager->getProgram(sName), "fInnerRadius");*/
 }
 

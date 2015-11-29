@@ -32,9 +32,16 @@ void main()
 	
 	float d1 = min(min(gTriDistance.x, gTriDistance.y), gTriDistance.z);
 	float d2 = min(min(min(gPatchDistance.x, gPatchDistance.y), gPatchDistance.z), gPatchDistance.w);
-	d1 = 1 - amplify(d1, 70, -.5);
-	d2 = amplify(d2, 70, -0.5);
+	d1 = 1 - amplify(d1, 25, -.50);
+	d2 = amplify(d2, 500, -0.50);
 	
 	
-	FragColor = vec4((diffuse + ambient) * (d2 * ge_in.color.xyz + d1 * d2 * InnerLineColor), 1.0);
+	vec3 col = vec3((diffuse + ambient) * (ge_in.color.xyz));
+	if(true){
+		FragColor = vec4(d2 * col + d1 * d2 * InnerLineColor, 1.0);
+	}
+	else{
+		FragColor = vec4(col, 1.0);
+	}
+	
 }

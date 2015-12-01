@@ -223,7 +223,10 @@ void main()
 	tes_out.color = interpolate(tes_in[0].color, tes_in[1].color, tes_in[2].color, tes_in[3].color);
 	tes_out.normal = calcnorm(tes_in[0].normal, tes_in[1].normal, tes_in[2].normal, tes_in[3].normal);
 	
-	tes_out.noise = 10.0 * -.10 * turbulence(.5 * tes_out.normal);
+	tes_out.noise = 10.0 * -.10 * turbulence(5.5 * tes_out.normal);
+	float b = 5.0 * pnoise(.05 * tes_out.position.xyz, vec3(100.0));
+	float displacement = -10.0 * tes_out.noise + b;
+	vec3 nPos = tes_out.position.xyz + tes_out.normal.xyz * displacement;
 	
 	//(gl_TessCoord.x * tes_in[0].color + 
 					 //gl_TessCoord.y * tes_in[1].color +

@@ -195,7 +195,7 @@ float turbulence( vec3 p ) {
 void main()
 {
 
-	vs_out.noise = 10.0 * -.10 * turbulence(.5 * normal + 1337);
+	vs_out.noise = 10.0 * -.10 * turbulence(5.5 * normal + 1337);
 	float b = 5.0 * pnoise(.05 * position.xyz, vec3(100.0));
 	float displacement = -10.0 * vs_out.noise + b;
 	vec3 nPos = position.xyz + normal * displacement;

@@ -40,8 +40,8 @@ typedef tuple<int, int, int> tup3i;
 typedef glm::vec3 vector3f;
 typedef glm::vec3 color3f;
 typedef glm::vec3 normal3f;
-const int width = 1440;
-const int height = 900;
+const int width = 800;
+const int height = 600;
 
 const static int tess = 1;
 

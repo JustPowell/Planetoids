@@ -13,6 +13,8 @@ in vec4 gPatchDistance;
 
 out vec4 FragColor;
 
+bool lines = true;
+
 vec3 InnerLineColor = vec3(1, 1, 1);
 float amplify(float d, float scale, float offset)
 {
@@ -37,7 +39,7 @@ void main()
 	
 	
 	vec3 col = vec3((diffuse + ambient) * (ge_in.color.xyz));
-	if(true){
+	if(lines){
 		FragColor = vec4(d2 * col + d1 * d2 * InnerLineColor, 1.0);
 	}
 	else{

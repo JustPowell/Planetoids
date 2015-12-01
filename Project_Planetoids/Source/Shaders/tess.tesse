@@ -161,9 +161,10 @@ void main()
 	tes_out.color = interpolate(tes_in[0].color, tes_in[1].color, tes_in[2].color, tes_in[3].color);
 	tes_out.normal = calcnorm(tes_in[0].position, tes_in[1].position, tes_in[2].position, tes_in[3].position);
 	
-	tes_out.noise = 0.0 * -.1 * turbulence(.60 * tes_out.normal.xyz + 1337);
+	tes_out.noise = -.1 * turbulence(.60 * tes_out.normal.xyz);
 	
-	float b = .30 * pnoise(2. * tes_out.position.xyz, vec3(100.0));
+	float b = .3 * pnoise(2. * tes_out.position.xyz, vec3(10323530));
+	//(1.0 gives wavy lines)
 	float displacement =  tes_out.noise + b;
 	vec3 nPos = tes_out.position.xyz + tes_out.normal * displacement;
 	gl_Position = projection * view * model * vec4(nPos, 1.0);

@@ -3,25 +3,16 @@
 
 Sky::Sky()
 {
-	this->setRadius(1.f);
-	this->setLoc(glm::vec3(0, 0, 0));
-	this->atmoMesh = PlanetMesh(this->radius, 6);
-	this->modelMatrix = glm::mat4(1.0f);
-	//loadShader(this->atmoEProgram, "edgeShader");
-	//loadShader(this->atmoProgram, "atmoShader2");
-	
-	//this->loadShaderVariables();
-	//this->bufferObjects();
-	
 }
 Sky::Sky(GLfloat radius, ShaderManager* sManager, glm::vec3 loc = glm::vec3(0, 0, 0))
 {
 	this->sManager = sManager;
 	this->setRadius(radius);
 	this->setLoc(loc);
-	this->atmoMesh = PlanetMesh(this->radius, 1, 0, 1);
-	this->spaceMesh = PlanetMesh(this->radius, 5, 0);
+	this->atmoMesh = PlanetMesh(this->radius, 0, 0, 1);
+	this->spaceMesh = PlanetMesh(this->radius, 7, 0);
 	this->modelMatrix = glm::mat4(1.0f);
+	this->mesh = 0;
 
 	sManager->createProgram("atmoShader2");
 	sManager->createProgram("edgeShader2");

@@ -147,8 +147,8 @@ void PObject::draw(Camera* camera)
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDepthRange(0.0, 0.99999);
-
-	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	
+	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
 	//--------------------------------------------------------------------------------------
 	
 	

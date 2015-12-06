@@ -31,6 +31,6 @@ void main()
 	vec4 color = getRayleighPhase(fcos2) * c0 + getMiePhase(fcos, fcos2, g, g2) * c1;
 
 	color.a = color.b;
-	FragColor = color;
+	FragColor = 1.0 - exp(-1.5f * color);
 
 }

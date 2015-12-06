@@ -40,7 +40,7 @@ typedef tuple<int, int, int> tup3i;
 typedef glm::vec3 vector3f;
 typedef glm::vec3 color3f;
 typedef glm::vec3 normal3f;
-const int width = 1920;
-const int height = 1080;
+const int width = 1440;
+const int height = 900;
 
 static glm::mat4 proj = glm::perspective(30.0f, (float)width / (float)height, 0.001f, 10000.f);

@@ -148,6 +148,23 @@ vec3 calcnorm (vec4 v0, vec4 v1, vec4 v2, vec4 v3)
 	return norm;
 }
 
+float getSmoothness(vec4 col)
+{
+	float s;
+	if(col.xyz == vec3(0.f, 0.f, 1.f) || col.xyz == vec3(1.f, 0.f, 0.f) || col.xyz == vec3(0.f, 1.f, 0.f)
+	   || col.xyz == vec3(1.f, 1.f, 0.f) || col.xyz == vec3(0.f, 1.f, 1.f) || col.xyz == vec3(1.f, 0.f, 1.f)
+	   || col.xyz == vec3(1.f, 1.f, 1.f) || col.xyz == vec3(1.f, 0.5f, 0.f) || col.xyz == vec3(0.25f, 0.25f, .25f))
+	{
+		s = .05f;
+	}
+	else
+	{
+		s = .4f;
+	}
+	return s;
+}
+
+
 void main()
 {
 	/*gl_Position = interpolate(
@@ -161,9 +178,9 @@ void main()
 	tes_out.color = interpolate(tes_in[0].color, tes_in[1].color, tes_in[2].color, tes_in[3].color);
 	tes_out.normal = calcnorm(tes_in[0].position, tes_in[1].position, tes_in[2].position, tes_in[3].position);
 	
-	tes_out.noise = -.1 * turbulence(.60 * tes_out.normal.xyz);
+	tes_out.noise = 0 * turbulence(.60 * tes_out.normal.xyz);
 	
-	float b = .3 * pnoise(2. * tes_out.position.xyz, vec3(10323530));
+	float b = getSmoothness(tes_out.color) * pnoise(2. * tes_out.position.xyz, vec3(1032353));
 	//(1.0 gives wavy lines)
 	float displacement =  tes_out.noise + b;
 	vec3 nPos = tes_out.position.xyz + tes_out.normal * displacement;

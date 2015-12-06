@@ -280,10 +280,10 @@ void Face::setpNum(int n)
 		vc = color3f(1.f, 1.f, 1.f);
 		break;
 	case 7:
-		vc = color3f(0.5f, 1.f, 0.f);
+		vc = color3f(1.f, .5f, 0.f);
 		break;
 	case 8:
-		vc = color3f(0.f, 1.f, 0.5f);
+		vc = color3f(0.25f, .25f, 0.25f);
 		break;
 	}
 	this->vertexList[0]->setColor(vc);

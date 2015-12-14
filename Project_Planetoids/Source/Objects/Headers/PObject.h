@@ -53,7 +53,7 @@ private:
 	float cHeight;
 
 	PlanetMesh mesh;
-	//Sky sky;
+	Sky sky;
 
 	GLuint vBuffer, cBuffer, nBuffer, iBuffer;
 	

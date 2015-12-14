@@ -40,7 +40,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 	camera->move(key, action, mods);
 	planetObj->changeLambda(key, action, mods);
-	//planetObj->getSky().updateShader(key, action, mods);
+	planetObj->getSky().updateShader(key, action, mods);
 }
 
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -84,7 +84,7 @@ int main(void)
 	{
 		camera->update();
 		planetObj->update();
-		//planetObj->getSky().update(camera);
+		planetObj->getSky().update(camera);
 		//star->update();
 		draw(window);
 	}
@@ -109,7 +109,7 @@ void init(GLFWwindow* window)
 	camera = new Camera(pos, tar, up);
 
 	if (tess)
-		planetObj = new PObject("tess", r, 4, sManager);
+		planetObj = new PObject("tess", r, 5, sManager);
 	else
 		planetObj = new PObject("tess2", r, 4, sManager);
 	//star = new Star("starShader", 272.0f, sManager);
@@ -136,7 +136,7 @@ void draw(GLFWwindow* window)
 
 	//star->draw(camera);
 	planetObj->draw(camera);
-	//planetObj->getSky().draw(camera);
+	planetObj->getSky().draw(camera);
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

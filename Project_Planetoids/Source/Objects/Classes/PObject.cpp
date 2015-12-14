@@ -21,7 +21,7 @@ PObject::PObject(string name, GLfloat radius, int tesslvl, ShaderManager* sManag
 	this->loadShaderVariables();
 	this->bufferTerrainObjects();
 
-	//this->sky = Sky(radius * 1.025, this->sManager, this->loc);
+	this->sky = Sky(radius * 1.025, this->sManager, this->loc);
 }
 
 

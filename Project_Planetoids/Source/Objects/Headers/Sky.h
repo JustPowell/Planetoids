@@ -39,10 +39,10 @@ private:
 	glm::vec3 cameraPos;
 	float cHeight = 0;
 	int mesh;
-	//glm::vec3 v3InvWaveLength = glm::vec3(.650, .570, .475);
-	//float Kr = .0025f;
-	//float Km = .0010f;
-	//float eSun = 30.f;
+	glm::vec3 v3InvWaveLength = glm::vec3(.650, .570, .475);
+	float Kr = .0025f;
+	float Km = .0010f;
+	float eSun = 30.f;
 
 	struct Program
 	{

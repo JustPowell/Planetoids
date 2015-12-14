@@ -12,7 +12,7 @@ PlanetMesh::PlanetMesh(GLfloat r, int sublvl, int random, int atmo)
 	this->setRadius(r);
 	this->setSubdivisionLvl(sublvl);
 	this->buildPlanet(atmo);
-	this->sim = Simplex();
+	//this->sim = Simplex();
 }
 
 PlanetMesh::~PlanetMesh()
@@ -35,9 +35,10 @@ void PlanetMesh::buildPlanet(int atmo)
 	this->initCube(atmo);
 	if (atmo)
 		this->initAtmoCube();
-	else
+	else{
 		this->subdivide(this->sublvl);
-	this->genPlates();
+		this->genPlates();
+	}
 	this->toSphere();
 }
 
@@ -362,7 +363,7 @@ void PlanetMesh::toSphere()
 		double randn;
 		if (this->random)// && (count2 % 10 == 0))
 		{
-			randn = .05*sim.noise(loc.x, loc.y, loc.z);//(rand() % 50);
+			//randn = .05*sim.noise(loc.x, loc.y, loc.z);//(rand() % 50);
 			//cout << randn << endl;
 			count2 = 0;
 		}

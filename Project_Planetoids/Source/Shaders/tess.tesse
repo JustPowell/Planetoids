@@ -184,6 +184,7 @@ void main()
 	//(1.0 gives wavy lines)
 	float displacement =  tes_out.noise + b;
 	vec3 nPos = tes_out.position.xyz + tes_out.normal * displacement;
+	
 	gl_Position = projection * view * model * vec4(nPos, 1.0);
 	//gl_Position = projection * model * view * tes_out.position;
 	

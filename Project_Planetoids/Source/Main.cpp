@@ -111,7 +111,7 @@ void init(GLFWwindow* window)
 	if (tess)
 		planetObj = new PObject("tess", r, 5, sManager);
 	else
-		planetObj = new PObject("tess2", r, 4, sManager);
+		planetObj = new PObject("shadertest", r, 5, sManager);
 	//star = new Star("starShader", 272.0f, sManager);
 	//star->setLoc(glm::vec3(4776.f, 0, 0));
 

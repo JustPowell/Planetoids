@@ -120,13 +120,13 @@ void PObject::draw(Camera* camera)
 	glUniformMatrix4fv(this->cp.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 	
 	glUniform3fv(this->cp.cameraPos, 1, glm::value_ptr(camera->getPos()));
-	/*glUniform1f(this->cp.Kr, this->sManager->Kr);
+	glUniform1f(this->cp.Kr, this->sManager->Kr);
 	glUniform1f(this->cp.Km, this->sManager->Km);
 	glUniform1f(this->cp.eSun, this->sManager->eSun);
 	glUniform3fv(this->cp.v3InvWaveLength, 1, glm::value_ptr(glm::vec3(1 / pow(this->sManager->v3InvWaveLength.r, 4), 1 / pow(this->sManager->v3InvWaveLength.g, 4), 1 / pow(this->sManager->v3InvWaveLength.b, 4))));
 	glUniform1i(this->cp.nSamples, this->sManager->nSamples);
 	glUniform1f(this->cp.radius, this->radius);
-	*/
+	
 	glDepthRange(0.0, 1.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if (tess)
@@ -139,7 +139,7 @@ void PObject::draw(Camera* camera)
 
 
 	//--------------------------------------------------------------------------------------
-	glUseProgram(this->edgeShader.pId);
+	/*glUseProgram(this->edgeShader.pId);
 	this->bindTerrainBuffers(1);
 
 	glUniformMatrix4fv(this->edgeShader.u_PMatrix, 1, GL_FALSE, glm::value_ptr(proj));
@@ -149,7 +149,7 @@ void PObject::draw(Camera* camera)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDepthRange(0.0, 0.99999);
 
-	//glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_QUADS, this->mesh.getNumInd(), GL_UNSIGNED_INT, 0);*/
 }
 
 void PObject::setLoc(glm::vec3 loc)
@@ -185,7 +185,7 @@ glm::vec3 PObject::getLoc()
 
 Sky& PObject::getSky()
 {
-	return Sky();// this->sky;
+	return this->sky;// this->sky;
 }
 
 void PObject::bufferTerrainObjects()
@@ -252,19 +252,19 @@ void PObject::loadShader(Program& shader, string sName)
 	shader.u_PMatrix = glGetUniformLocation(this->sManager->getProgram(sName), "projection");
 	shader.u_VMatrix = glGetUniformLocation(this->sManager->getProgram(sName), "view");
 	shader.u_MMatrix = glGetUniformLocation(this->sManager->getProgram(sName), "model");
-	/*shader.Kr = glGetUniformLocation(this->sManager->getProgram(sName), "Kr");
+	shader.Kr = glGetUniformLocation(this->sManager->getProgram(sName), "Kr");
 	shader.Km = glGetUniformLocation(this->sManager->getProgram(sName), "Km");
 	shader.eSun = glGetUniformLocation(this->sManager->getProgram(sName), "ESun");
 	shader.v3InvWaveLength = glGetUniformLocation(this->sManager->getProgram(sName), "v3InvWaveLength");
-	*/
+	
 	shader.cameraPos = glGetUniformLocation(this->sManager->getProgram(sName), "cameraPos");
 	
 	shader.a_Position = glGetAttribLocation(this->sManager->getProgram(sName), "position");
 	
 	shader.a_Color = glGetAttribLocation(this->sManager->getProgram(sName), "color");
 	shader.a_Normal = glGetAttribLocation(this->sManager->getProgram(sName), "normal");
-	/*shader.nSamples = glGetUniformLocation(this->sManager->getProgram(sName), "nSamples");
-	shader.radius = glGetUniformLocation(this->sManager->getProgram(sName), "fInnerRadius");*/
+	shader.nSamples = glGetUniformLocation(this->sManager->getProgram(sName), "nSamples");
+	shader.radius = glGetUniformLocation(this->sManager->getProgram(sName), "fInnerRadius");
 }
 
 void PObject::loadEdgeShader()

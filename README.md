@@ -1,5 +1,6 @@
 # Planetoids
 
 A system to generate planetary bodies in a simple solar system.
+Terrain Generation
 
-REFER TO PAPER, POWERPOINT PRESENTATION, AND POSTER FOR MORE INFORMATION
+Refer to paper, powerpoint presentation, and poster for more info on the project.

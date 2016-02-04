@@ -10,7 +10,7 @@ Sky::Sky(GLfloat radius, ShaderManager* sManager, glm::vec3 loc = glm::vec3(0, 0
 	this->setRadius(radius);
 	this->setLoc(loc);
 	this->atmoMesh = PlanetMesh(this->radius, 1, 0, 1);
-	this->spaceMesh = PlanetMesh(this->radius, 6, 0, 0);
+	this->spaceMesh = PlanetMesh(this->radius, 5, 0, 0);
 	this->modelMatrix = glm::mat4(1.0f);
 	this->mesh = 0;
 
@@ -216,7 +216,7 @@ void Sky::draw(Camera* camera)
 	glUniform1f(this->cp.eSun, this->sManager->eSun);
 	glUniform3fv(this->cp.v3InvWaveLength, 1, glm::value_ptr(glm::vec3(1 / pow(this->sManager->v3InvWaveLength.r, 4), 1 / pow(this->sManager->v3InvWaveLength.g, 4), 1 / pow(this->sManager->v3InvWaveLength.b, 4))));
 	glUniform1i(this->cp.nSamples, this->sManager->nSamples);
-	glUniform1f(this->cp.radius, 50.f);
+	glUniform1f(this->cp.radius, this->radius / 1.025);
 	printf("Camera Pos: %f %f %f %f \n %f %f %f \n Kr: %f\nKm: %f\neSun: %f\nSpeed: %f\nnSamples: %i\n nVA: %i nFA: %i\n nVS: %i nFS %i", 
 			this->cHeight, this->cameraPos.x, this->cameraPos.y, this->cameraPos.z, 
 			this->sManager->v3InvWaveLength.r, this->sManager->v3InvWaveLength.g, this->sManager->v3InvWaveLength.b,

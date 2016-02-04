@@ -101,8 +101,11 @@ void init(GLFWwindow* window)
 	//srand(time(NULL));
 	srand(1337);
 	sManager = new ShaderManager();
+	//------------------------------------
+	//BREAKS IF NOT 10.0f!!!
+	int r = 10.f; 
+	//------------------------------------
 
-	int r = 50.f;
 	glm::vec3 pos(0.f, 0.f, -r*2);
 	glm::vec3 tar(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);

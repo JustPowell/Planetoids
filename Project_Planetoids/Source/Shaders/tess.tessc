@@ -46,7 +46,7 @@ vec2 screen_space(vec4 vertex) {
 }
 
 float level(vec2 v0, vec2 v1){
-	return clamp(distance(v0, v1)/lod_factor, 1, 64);
+	return clamp(distance(v0, v1)/lod_factor, 1, 25);
 }
 
 void main()

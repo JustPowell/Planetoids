@@ -119,6 +119,7 @@ void PObject::draw(Camera* camera)
 	glUniformMatrix4fv(this->cp.u_VMatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
 	glUniformMatrix4fv(this->cp.u_MMatrix, 1, GL_FALSE, glm::value_ptr(this->modelMatrix));
 	
+	
 	glUniform3fv(this->cp.cameraPos, 1, glm::value_ptr(camera->getPos()));
 	glUniform1f(this->cp.Kr, this->sManager->Kr);
 	glUniform1f(this->cp.Km, this->sManager->Km);
